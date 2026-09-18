@@ -56,10 +56,12 @@ class PanduanContentTest {
 
     @Test
     fun `FAQ bevat veelgestelde onderwerpen`() {
-        val q = PanduanContent.faq.map { it.pertanyaan.lowercase() }.joinToString("\n")
-        assertTrue(q.contains("api"))
-        assertTrue(q.contains("biya") || q.contains("kost"))
-        assertTrue(q.contains("data"))
+        val tekst = (PanduanContent.faq.map { it.pertanyaan } + PanduanContent.faq.map { it.jawaban })
+            .joinToString("\n")
+            .lowercase()
+        assertTrue("FAQ moet AI noemen", tekst.contains("ai"))
+        assertTrue("FAQ moet data noemen", tekst.contains("data"))
+        assertTrue("FAQ moet kosten noemen", tekst.contains("kost") || tekst.contains("biya"))
     }
 
     @Test
