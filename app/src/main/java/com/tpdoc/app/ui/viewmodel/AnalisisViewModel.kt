@@ -100,7 +100,7 @@ class AnalisisViewModel(application: Application) : AndroidViewModel(application
             if (!wajibMf && !wajibCbcr) {
                 append("Tidak ada kewajiban TP Doc formal. Prinsip kewajaran tetap berlaku.")
             }
-            if (sanksi.isEmpty()) {
+            if (length == 0) {
                 append("Semua dokumen sudah sesuai ketentuan.")
             }
         }
