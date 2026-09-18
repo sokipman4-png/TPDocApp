@@ -9,6 +9,9 @@ CI final Tahap 2: run **35371413592** (success) — https://github.com/sokipman4
 Unit test Tahap 2: **57 tests, 0 failures, 0 errors**
 CI final Tahap 2.5: run **35384010767** (SUCCESS, verified) — https://github.com/sokipman4-png/TPDocApp/actions/runs/35384010767
 Unit test Tahap 2.5: **90 tests, 0 failures, 0 errors** (14 suites, waaronder LogoValidatorTest 7 + RestoreFlowTest 5 + NavigationRoutesTest 10)
+CI final Tahap 2.6: run **35402111194** (SUCCESS, verified) — https://github.com/sokipman4-png/TPDocApp/actions/runs/35402111194
+Unit test Tahap 2.6: **129 tests, 0 failures, 0 errors** (19 suites, +39 nieuwe: FormValidationTest 13, DummyDataFactoryTest 6, ShareIntentTest 5, OnboardingFlowTest 7, PanduanContentTest 8)
+Artifact Tahap 2.6: **tpdoc-debug-apk** (id=10570613095) — https://github.com/sokipman4-png/TPDocApp/actions/runs/35402111194/artifacts
 Artifact Tahap 2.5: **tpdoc-debug-apk** (id=10563321093) — https://github.com/sokipman4-png/TPDocApp/actions/runs/35384010767/artifacts
 Artifact Tahap 2: tpdoc-debug-apk — https://github.com/sokipman4-png/TPDocApp/actions/runs/35371413592/artifacts
 
@@ -132,7 +135,7 @@ Artifact Tahap 2: tpdoc-debug-apk — https://github.com/sokipman4-png/TPDocApp/
 
 ## Ringkasan
 - **Tahap 2.6: 3 bug gerepareerd** (crash bij simpen, FLAG_ACTIVITY_NEW_TASK share, menu Analisis) + **2 functies nieuw** (data dummy, onboarding + tutorial/panduan + tooltips + empty states)
-- Unit test suites nieuw: FormValidationTest (13), DummyDataFactoryTest (6), ShareIntentTest (5), OnboardingFlowTest (7), PanduanContentTest (8) — totaal 90 + 39 = **129 tests**, 0 failures, 0 errors (bevestigd in CI run Tahap 2.6)
+- Unit test suites nieuw: FormValidationTest (13), DummyDataFactoryTest (6), ShareIntentTest (5), OnboardingFlowTest (7), PanduanContentTest (8) — totaal 90 + 39 = **129 tests, 0 failures, 0 errors** (CI run 35402111194, SUCCESS, APK artifact id=10570613095)
 - Navigation: 16 → **18 routes** (onboarding, panduan) — NavigationRoutesTest past zich automatisch aan (source-scan)
 - Pelajaran Tahap 2.6 toegepast: validatie vóór DB-schrijven (FormValidation pure), try-catch overal (Log.e + vriendelijke boodschap), geen `!!`, viewModelScope + Dispatchers.IO, UiState per scherm
 - Room-migratie v3→v4: kolom isDummy (data dummy gescheiden van echte data; "Hapus Data Contoh" verwijdert alleen isDummy=1)
