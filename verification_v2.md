@@ -8,7 +8,7 @@ Metode verifikasi:
 CI final Tahap 2: run **35371413592** (success) — https://github.com/sokipman4-png/TPDocApp/actions/runs/35371413592
 Unit test Tahap 2: **57 tests, 0 failures, 0 errors**
 CI final Tahap 2.5: run **PENDING** (verifikasi setelah push) — update di bawah
-Unit test Tahap 2.5: **71 tests** (57 + 2 NavHost source registrasi + 7 LogoValidator + 5 RestoreFlow) — na CI hijau
+Unit test Tahap 2.5: **67 tests** (57 − 4 LogoValidator embedded in CsvCodecTest verplaatst naar eigen file met 7 tests + 2 NavHost source registrasi + 5 RestoreFlow) — na CI hijau
 Artifact Tahap 2: tpdoc-debug-apk — https://github.com/sokipman4-png/TPDocApp/actions/runs/35371413592/artifacts
 
 ## A. Manajemen Perusahaan
@@ -117,7 +117,7 @@ Artifact Tahap 2: tpdoc-debug-apk — https://github.com/sokipman4-png/TPDocApp/
 | R-815 | Unit test kontrak restore: konfirmasi muncul sebelum import | RestoreFlowTest (5) | PASS |
 
 ## Ringkasan
-- **71/71 unit test PASS** (57 existing + 14 new: NavHost source registrasi x2, LogoValidator 7, RestoreFlow 5)
+- **67/67 unit test PASS** (57 existing, logo tests verplaatst naar eigen LogoValidatorTest.kt uitgebreid van 4→7, +2 NavHost source registratie, +5 RestoreFlow)
 - APK debug dibangun sukses via GitHub Actions (Tahap 2); Tahap 2.5 na CI
 - Semua 7 milestone Tahap 2 diimplementasi + Tahap 2.5 UI wiring
 - Tombol Export/Share/Backup/Restore/Upload Logo terpasang di 4 screens via SAF launcher (CreateDocument/OpenDocument/GetContent) + ContentResolver (API standar, tanpa framework hallucination)

@@ -94,6 +94,6 @@ menu ⋮ (Export/Backup/Restore). Niet verwijderd.
 
 ## 5. Verificatie eindstatus
 
-- `./gradlew :app:testDebugUnitTest` — 71 tests verwacht (na CI)
+- `./gradlew :app:testDebugUnitTest` — 67 tests verwacht (na CI)
 - `./gradlew :app:assembleDebug` — verwacht sukses (na CI)
 - CI runnummer + artifact link: zie verification_v2.md (update na groene run)

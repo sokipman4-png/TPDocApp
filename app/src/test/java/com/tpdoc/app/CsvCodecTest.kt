@@ -1,7 +1,6 @@
 package com.tpdoc.app
 
 import com.tpdoc.app.data.export.CsvCodec
-import com.tpdoc.app.data.export.LogoValidator
 import com.tpdoc.app.data.room.Perusahaan
 import org.junit.Assert.*
 import org.junit.Test
@@ -58,38 +57,5 @@ class CsvCodecTest {
         val p = Perusahaan(nama = "PT;Holding", npwp = "1", alamat = "Jl, A")
         val csv = CsvCodec.buildCsv(listOf(p))
         assertTrue(csv.contains("\"PT;Holding\""))
-    }
-}
-
-class LogoValidatorTest {
-
-    @Test
-    fun `valid jpeg mime`() {
-        assertTrue(LogoValidator.isValidMime("image/jpeg"))
-        assertTrue(LogoValidator.isValidMime("image/png"))
-    }
-
-    @Test
-    fun `reject gif and other mime`() {
-        assertFalse(LogoValidator.isValidMime("image/gif"))
-        assertFalse(LogoValidator.isValidMime("application/pdf"))
-        assertFalse(LogoValidator.isValidMime(null))
-        assertFalse(LogoValidator.isValidMime(""))
-    }
-
-    @Test
-    fun `size limit 5MB`() {
-        assertTrue(LogoValidator.isValidSize(1024))
-        assertTrue(LogoValidator.isValidSize(5L * 1024 * 1024))
-        assertFalse(LogoValidator.isValidSize(5L * 1024 * 1024 + 1))
-        assertFalse(LogoValidator.isValidSize(0))
-    }
-
-    @Test
-    fun `validate returns error message`() {
-        assertNull(LogoValidator.validate("image/png", 1000))
-        assertNotNull(LogoValidator.validate("image/gif", 1000))
-        assertNotNull(LogoValidator.validate("image/png", 6L * 1024 * 1024))
-        assertNotNull(LogoValidator.validate(null, 1000))
     }
 }

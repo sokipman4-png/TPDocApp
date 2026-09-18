@@ -90,7 +90,7 @@ class NavigationRoutesTest {
         val navHost = navHostSource()
         assertTrue(
             "Start destination wajib didaftarkan lewat composable()",
-            Regex("composable\\s*\\(\\s*(?:route\\s*=\\s*)?Routes\\.(?:DAFTAR_PERUSAHAAN)").containsMatch(navHost),
+            Regex("composable\\s*\\(\\s*(?:route\\s*=\\s*)?Routes\\.(?:DAFTAR_PERUSAHAAN)").containsMatchIn(navHost),
         )
     }
 
