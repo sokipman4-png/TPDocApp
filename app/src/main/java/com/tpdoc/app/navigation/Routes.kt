@@ -16,6 +16,7 @@ object Routes {
     const val DAFTAR_PERUSAHAAN = "daftar_perusahaan"
     const val FORM_PERUSAHAAN = "form_perusahaan/{perusahaanId}"
     const val DETAIL_PERUSAHAAN = "detail_perusahaan/{perusahaanId}"
+    const val DASHBOARD = "dashboard"
 
     fun formPerusahaan(perusahaanId: Long? = null): String =
         "form_perusahaan/${perusahaanId ?: 0}"

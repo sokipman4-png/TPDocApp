@@ -17,6 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.Dashboard
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Search
@@ -58,6 +59,7 @@ fun DaftarPerusahaanScreen(
     onTambah: () -> Unit,
     onDetail: (Long) -> Unit,
     onBack: (() -> Unit)? = null,
+    onDashboard: (() -> Unit)? = null,
     vm: PerusahaanViewModel = viewModel(),
 ) {
     val state by vm.uiState.collectAsState()
@@ -70,6 +72,11 @@ fun DaftarPerusahaanScreen(
         title = "Daftar Perusahaan",
         onBack = onBack,
         actions = {
+            if (onDashboard != null) {
+                IconButton(onClick = onDashboard) {
+                    Icon(Icons.Default.Dashboard, contentDescription = "Dashboard")
+                }
+            }
             IconButton(onClick = { showFilterMenu = true }) {
                 Icon(Icons.Default.FilterList, contentDescription = "Filter")
             }

@@ -106,7 +106,12 @@ fun TPDocApp(navController: NavHostController = rememberNavController()) {
                 DaftarPerusahaanScreen(
                     onTambah = { navController.navigate(Routes.formPerusahaan(null)) },
                     onDetail = { id -> navController.navigate(Routes.detailPerusahaan(id)) },
+                    onDashboard = { navController.navigate(Routes.DASHBOARD) },
                 )
+            }
+
+            composable(Routes.DASHBOARD) {
+                DashboardScreen(onBack = { navController.popBackStack() })
             }
 
             composable(
