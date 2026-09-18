@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountTree
+import androidx.compose.material.icons.filled.Analytics
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Business
 import androidx.compose.material.icons.filled.Edit
@@ -50,6 +51,7 @@ fun DetailPerusahaanScreen(
     perusahaanId: Long,
     onEdit: (Long) -> Unit,
     onBack: () -> Unit,
+    onAnalisis: ((Long) -> Unit)? = null,
     repo: PerusahaanRepository = PerusahaanRepository(
         androidx.compose.ui.platform.LocalContext.current
     ),
@@ -69,6 +71,11 @@ fun DetailPerusahaanScreen(
                     }
                 },
                 actions = {
+                    if (onAnalisis != null) {
+                        IconButton(onClick = { onAnalisis(perusahaanId) }) {
+                            Icon(Icons.Default.Analytics, contentDescription = "Analisis")
+                        }
+                    }
                     IconButton(onClick = { onEdit(perusahaanId) }) {
                         Icon(Icons.Default.Edit, contentDescription = "Edit")
                     }

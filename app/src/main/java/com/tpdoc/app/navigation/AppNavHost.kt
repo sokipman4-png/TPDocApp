@@ -24,6 +24,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.tpdoc.app.ui.screens.AnalisisScreen
 import com.tpdoc.app.ui.screens.BerelasiScreen
 import com.tpdoc.app.ui.screens.DaftarPerusahaanScreen
 import com.tpdoc.app.ui.screens.DashboardScreen
@@ -124,6 +125,18 @@ fun TPDocApp(navController: NavHostController = rememberNavController()) {
             }
 
             composable(
+                route = Routes.ANALISIS,
+                arguments = listOf(navArgument("perusahaanId") { type = NavType.LongType }),
+            ) { entry ->
+                val id = entry.arguments?.getLong("perusahaanId") ?: return@composable
+                AnalisisScreen(
+                    perusahaanId = id,
+                    onBack = { navController.popBackStack() },
+                    onAnalisisAI = { /* TODO: Milestone 5 */ },
+                )
+            }
+
+            composable(
                 route = Routes.FORM_PERUSAHAAN,
                 arguments = listOf(navArgument("perusahaanId") { type = NavType.LongType; defaultValue = 0L }),
             ) { entry ->
@@ -144,6 +157,7 @@ fun TPDocApp(navController: NavHostController = rememberNavController()) {
                     perusahaanId = id,
                     onEdit = { editId -> navController.navigate(Routes.formPerusahaan(editId)) },
                     onBack = { navController.popBackStack() },
+                    onAnalisis = { analisisId -> navController.navigate(Routes.analisis(analisisId)) },
                 )
             }
         }
