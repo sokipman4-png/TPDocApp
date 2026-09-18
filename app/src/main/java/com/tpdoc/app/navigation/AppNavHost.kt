@@ -78,13 +78,6 @@ fun TPDocApp(navController: NavHostController = rememberNavController()) {
             composable(Routes.HOME) {
                 HomeScreen(
                     onNavigate = { route -> navController.navigate(route) },
-                    onBukaTab = { route ->
-                        navController.navigate(route) {
-                            popUpTo(navController.graph.findStartDestination().id) { saveState = true }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    },
                 )
             }
             composable(Routes.KRITERIA) { KriteriaScreen(onBack = { navController.popBackStack() }) }

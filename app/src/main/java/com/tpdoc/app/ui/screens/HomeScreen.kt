@@ -3,12 +3,9 @@ package com.tpdoc.app.ui.screens
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Calculate
 import androidx.compose.material.icons.filled.Description
@@ -52,11 +49,7 @@ private val fitur = listOf(
 )
 
 @Composable
-fun HomeScreen(
-    onNavigate: (String) -> Unit,
-    onBukaTab: (String) -> Unit,
-    isTabActive: Boolean,
-) {
+fun HomeScreen(onNavigate: (String) -> Unit) {
     ScreenScaffold(
         title = "TP Doc Indonesia",
         onBack = null,
@@ -101,26 +94,29 @@ fun HomeScreen(
         }
 
         SectionHeader("Fitur")
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-        ) {
-            items(fitur) { f ->
-                Card(
-                    onClick = { onNavigate(f.route) },
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Column(
-                        modifier = Modifier.padding(12.dp),
-                        verticalArrangement = Arrangement.spacedBy(6.dp),
+        fitur.chunked(2).forEach { baris ->
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                baris.forEach { f ->
+                    Card(
+                        onClick = { onNavigate(f.route) },
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                        modifier = Modifier.weight(1f),
                     ) {
-                        Icon(f.icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
-                        Text(f.label, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
-                        Text(f.deskripsi, style = MaterialTheme.typography.bodySmall)
+                        Column(
+                            modifier = Modifier.padding(12.dp),
+                            verticalArrangement = Arrangement.spacedBy(6.dp),
+                        ) {
+                            Icon(f.icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                            Text(f.label, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
+                            Text(f.deskripsi, style = MaterialTheme.typography.bodySmall)
+                        }
                     }
+                }
+                if (baris.size == 1) {
+                    Spacer(Modifier.weight(1f))
                 }
             }
         }
