@@ -132,7 +132,6 @@ fun TPDocApp(navController: NavHostController = rememberNavController()) {
                 AnalisisScreen(
                     perusahaanId = id,
                     onBack = { navController.popBackStack() },
-                    onAnalisisAI = { /* TODO: Milestone 5 */ },
                 )
             }
 
