@@ -174,12 +174,12 @@ object DummyDataFactory {
 
     private fun putIntLE(bytes: ByteArray, offset: Int, value: Int) {
         for (i in 0..3) {
-            bytes[offset + i] = ((value ushr (8 * i)) & 0xFF).toByte()
+            bytes[offset + i] = ((value >>> (8 * i)) & 0xFF).toByte()
         }
     }
 
     private fun putShortLE(bytes: ByteArray, offset: Int, value: Int) {
         bytes[offset] = (value & 0xFF).toByte()
-        bytes[offset + 1] = ((value ushr 8) & 0xFF).toByte()
+        bytes[offset + 1] = ((value >>> 8) & 0xFF).toByte()
     }
 }

@@ -71,7 +71,7 @@ object PanduanContent {
             "5. Cara Setting API Key OpenRouter",
             "Voor AI-analyse is een OpenRouter API key nodig. Maak gratis een account en genereer een key.",
             listOf(
-                "Ga naar " + URL_OPENROUTER_KEYS en genereer een key (formaat sk-or-v1-...).",
+                "Ga naar " + URL_OPENROUTER_KEYS + " en genereer een key (formaat sk-or-v1-...).",
                 "Open Instellingen → API Key OpenRouter en plak de key → Simpan.",
                 "Druk op Test om de verbinding te controleren. Refresh daarna het modellijst.",
                 "De key wordt versleuteld bewaard (EncryptedSharedPreferences).",
