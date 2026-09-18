@@ -44,6 +44,8 @@ fun ScreenScaffold(
     title: String,
     onBack: (() -> Unit)? = null,
     trailing: (@Composable () -> Unit)? = null,
+    actions: @Composable (() -> Unit)? = null,
+    floatingActionButton: @Composable (() -> Unit)? = null,
     bottomBar: @Composable () -> Unit = {},
     content: @Composable ColumnScope.() -> Unit,
 ) {
@@ -59,7 +61,7 @@ fun ScreenScaffold(
                     }
                 },
                 actions = {
-                    if (trailing != null) trailing()
+                    if (actions != null) actions() else if (trailing != null) trailing()
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primary,
@@ -70,6 +72,7 @@ fun ScreenScaffold(
             )
         },
         bottomBar = bottomBar,
+        floatingActionButton = floatingActionButton ?: {},
     ) { padding ->
         Column(
             modifier = Modifier

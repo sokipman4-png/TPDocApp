@@ -12,8 +12,19 @@ object Routes {
     const val NOTIFIKASI = "notifikasi"
     const val CARI = "cari"
 
+    // V2 routes
+    const val DAFTAR_PERUSAHAAN = "daftar_perusahaan"
+    const val FORM_PERUSAHAAN = "form_perusahaan/{perusahaanId}"
+    const val DETAIL_PERUSAHAAN = "detail_perusahaan/{perusahaanId}"
+
+    fun formPerusahaan(perusahaanId: Long? = null): String =
+        "form_perusahaan/${perusahaanId ?: 0}"
+
+    fun detailPerusahaan(perusahaanId: Long): String =
+        "detail_perusahaan/$perusahaanId"
+
     /** Rute layar utama yang tampil di bottom navigation. */
-    val TABS = listOf(HOME, KALKULATOR, DOKUMEN, BERELASI, CARI)
+    val TABS = listOf(DAFTAR_PERUSAHAAN, HOME, KALKULATOR, DOKUMEN, BERELASI)
 
     fun isTab(route: String?): Boolean = route in TABS
 }
