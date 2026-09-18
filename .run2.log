@@ -1,0 +1,385 @@
+Refreshing run status every 3 seconds. Press Ctrl+C to quit.
+
+* main Build TPDocApp · 35358996386
+Triggered via push less than a minute ago
+
+JOBS
+* build (ID 105645289076)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-java@v4
+  ✓ Run gradle/actions/setup-gradle@v3
+  ✓ Run chmod +x gradlew
+  * Unit tests
+  * Assemble debug APK
+  * Run actions/upload-artifact@v4
+  * Post Run gradle/actions/setup-gradle@v3
+  * Post Run actions/setup-java@v4
+  * Post Run actions/checkout@v4
+Refreshing run status every 3 seconds. Press Ctrl+C to quit.
+
+* main Build TPDocApp · 35358996386
+Triggered via push less than a minute ago
+
+JOBS
+* build (ID 105645289076)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-java@v4
+  ✓ Run gradle/actions/setup-gradle@v3
+  ✓ Run chmod +x gradlew
+  * Unit tests
+  * Assemble debug APK
+  * Run actions/upload-artifact@v4
+  * Post Run gradle/actions/setup-gradle@v3
+  * Post Run actions/setup-java@v4
+  * Post Run actions/checkout@v4
+Refreshing run status every 3 seconds. Press Ctrl+C to quit.
+
+* main Build TPDocApp · 35358996386
+Triggered via push less than a minute ago
+
+JOBS
+* build (ID 105645289076)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-java@v4
+  ✓ Run gradle/actions/setup-gradle@v3
+  ✓ Run chmod +x gradlew
+  * Unit tests
+  * Assemble debug APK
+  * Run actions/upload-artifact@v4
+  * Post Run gradle/actions/setup-gradle@v3
+  * Post Run actions/setup-java@v4
+  * Post Run actions/checkout@v4
+Refreshing run status every 3 seconds. Press Ctrl+C to quit.
+
+* main Build TPDocApp · 35358996386
+Triggered via push less than a minute ago
+
+JOBS
+* build (ID 105645289076)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-java@v4
+  ✓ Run gradle/actions/setup-gradle@v3
+  ✓ Run chmod +x gradlew
+  * Unit tests
+  * Assemble debug APK
+  * Run actions/upload-artifact@v4
+  * Post Run gradle/actions/setup-gradle@v3
+  * Post Run actions/setup-java@v4
+  * Post Run actions/checkout@v4
+Refreshing run status every 3 seconds. Press Ctrl+C to quit.
+
+* main Build TPDocApp · 35358996386
+Triggered via push about 1 minute ago
+
+JOBS
+* build (ID 105645289076)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-java@v4
+  ✓ Run gradle/actions/setup-gradle@v3
+  ✓ Run chmod +x gradlew
+  * Unit tests
+  * Assemble debug APK
+  * Run actions/upload-artifact@v4
+  * Post Run gradle/actions/setup-gradle@v3
+  * Post Run actions/setup-java@v4
+  * Post Run actions/checkout@v4
+Refreshing run status every 3 seconds. Press Ctrl+C to quit.
+
+* main Build TPDocApp · 35358996386
+Triggered via push about 1 minute ago
+
+JOBS
+* build (ID 105645289076)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-java@v4
+  ✓ Run gradle/actions/setup-gradle@v3
+  ✓ Run chmod +x gradlew
+  * Unit tests
+  * Assemble debug APK
+  * Run actions/upload-artifact@v4
+  * Post Run gradle/actions/setup-gradle@v3
+  * Post Run actions/setup-java@v4
+  * Post Run actions/checkout@v4
+Refreshing run status every 3 seconds. Press Ctrl+C to quit.
+
+* main Build TPDocApp · 35358996386
+Triggered via push about 1 minute ago
+
+JOBS
+* build (ID 105645289076)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-java@v4
+  ✓ Run gradle/actions/setup-gradle@v3
+  ✓ Run chmod +x gradlew
+  * Unit tests
+  * Assemble debug APK
+  * Run actions/upload-artifact@v4
+  * Post Run gradle/actions/setup-gradle@v3
+  * Post Run actions/setup-java@v4
+  * Post Run actions/checkout@v4
+Refreshing run status every 3 seconds. Press Ctrl+C to quit.
+
+* main Build TPDocApp · 35358996386
+Triggered via push about 1 minute ago
+
+JOBS
+* build (ID 105645289076)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-java@v4
+  ✓ Run gradle/actions/setup-gradle@v3
+  ✓ Run chmod +x gradlew
+  * Unit tests
+  * Assemble debug APK
+  * Run actions/upload-artifact@v4
+  * Post Run gradle/actions/setup-gradle@v3
+  * Post Run actions/setup-java@v4
+  * Post Run actions/checkout@v4
+Refreshing run status every 3 seconds. Press Ctrl+C to quit.
+
+* main Build TPDocApp · 35358996386
+Triggered via push about 1 minute ago
+
+JOBS
+* build (ID 105645289076)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-java@v4
+  ✓ Run gradle/actions/setup-gradle@v3
+  ✓ Run chmod +x gradlew
+  * Unit tests
+  * Assemble debug APK
+  * Run actions/upload-artifact@v4
+  * Post Run gradle/actions/setup-gradle@v3
+  * Post Run actions/setup-java@v4
+  * Post Run actions/checkout@v4
+Refreshing run status every 3 seconds. Press Ctrl+C to quit.
+
+* main Build TPDocApp · 35358996386
+Triggered via push about 1 minute ago
+
+JOBS
+* build (ID 105645289076)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-java@v4
+  ✓ Run gradle/actions/setup-gradle@v3
+  ✓ Run chmod +x gradlew
+  * Unit tests
+  * Assemble debug APK
+  * Run actions/upload-artifact@v4
+  * Post Run gradle/actions/setup-gradle@v3
+  * Post Run actions/setup-java@v4
+  * Post Run actions/checkout@v4
+Refreshing run status every 3 seconds. Press Ctrl+C to quit.
+
+* main Build TPDocApp · 35358996386
+Triggered via push about 1 minute ago
+
+JOBS
+* build (ID 105645289076)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-java@v4
+  ✓ Run gradle/actions/setup-gradle@v3
+  ✓ Run chmod +x gradlew
+  * Unit tests
+  * Assemble debug APK
+  * Run actions/upload-artifact@v4
+  * Post Run gradle/actions/setup-gradle@v3
+  * Post Run actions/setup-java@v4
+  * Post Run actions/checkout@v4
+Refreshing run status every 3 seconds. Press Ctrl+C to quit.
+
+* main Build TPDocApp · 35358996386
+Triggered via push about 1 minute ago
+
+JOBS
+* build (ID 105645289076)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-java@v4
+  ✓ Run gradle/actions/setup-gradle@v3
+  ✓ Run chmod +x gradlew
+  * Unit tests
+  * Assemble debug APK
+  * Run actions/upload-artifact@v4
+  * Post Run gradle/actions/setup-gradle@v3
+  * Post Run actions/setup-java@v4
+  * Post Run actions/checkout@v4
+Refreshing run status every 3 seconds. Press Ctrl+C to quit.
+
+* main Build TPDocApp · 35358996386
+Triggered via push about 1 minute ago
+
+JOBS
+* build (ID 105645289076)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-java@v4
+  ✓ Run gradle/actions/setup-gradle@v3
+  ✓ Run chmod +x gradlew
+  * Unit tests
+  * Assemble debug APK
+  * Run actions/upload-artifact@v4
+  * Post Run gradle/actions/setup-gradle@v3
+  * Post Run actions/setup-java@v4
+  * Post Run actions/checkout@v4
+Refreshing run status every 3 seconds. Press Ctrl+C to quit.
+
+* main Build TPDocApp · 35358996386
+Triggered via push about 1 minute ago
+
+JOBS
+* build (ID 105645289076)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-java@v4
+  ✓ Run gradle/actions/setup-gradle@v3
+  ✓ Run chmod +x gradlew
+  * Unit tests
+  * Assemble debug APK
+  * Run actions/upload-artifact@v4
+  * Post Run gradle/actions/setup-gradle@v3
+  * Post Run actions/setup-java@v4
+  * Post Run actions/checkout@v4
+Refreshing run status every 3 seconds. Press Ctrl+C to quit.
+
+* main Build TPDocApp · 35358996386
+Triggered via push about 1 minute ago
+
+JOBS
+* build (ID 105645289076)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-java@v4
+  ✓ Run gradle/actions/setup-gradle@v3
+  ✓ Run chmod +x gradlew
+  * Unit tests
+  * Assemble debug APK
+  * Run actions/upload-artifact@v4
+  * Post Run gradle/actions/setup-gradle@v3
+  * Post Run actions/setup-java@v4
+  * Post Run actions/checkout@v4
+Refreshing run status every 3 seconds. Press Ctrl+C to quit.
+
+* main Build TPDocApp · 35358996386
+Triggered via push about 1 minute ago
+
+JOBS
+* build (ID 105645289076)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-java@v4
+  ✓ Run gradle/actions/setup-gradle@v3
+  ✓ Run chmod +x gradlew
+  * Unit tests
+  * Assemble debug APK
+  * Run actions/upload-artifact@v4
+  * Post Run gradle/actions/setup-gradle@v3
+  * Post Run actions/setup-java@v4
+  * Post Run actions/checkout@v4
+Refreshing run status every 3 seconds. Press Ctrl+C to quit.
+
+* main Build TPDocApp · 35358996386
+Triggered via push about 2 minutes ago
+
+JOBS
+* build (ID 105645289076)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-java@v4
+  ✓ Run gradle/actions/setup-gradle@v3
+  ✓ Run chmod +x gradlew
+  X Unit tests
+  - Assemble debug APK
+  - Run actions/upload-artifact@v4
+  * Post Run gradle/actions/setup-gradle@v3
+  * Post Run actions/setup-java@v4
+  * Post Run actions/checkout@v4
+Refreshing run status every 3 seconds. Press Ctrl+C to quit.
+
+* main Build TPDocApp · 35358996386
+Triggered via push about 2 minutes ago
+
+JOBS
+* build (ID 105645289076)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-java@v4
+  ✓ Run gradle/actions/setup-gradle@v3
+  ✓ Run chmod +x gradlew
+  X Unit tests
+  - Assemble debug APK
+  - Run actions/upload-artifact@v4
+  ✓ Post Run gradle/actions/setup-gradle@v3
+  * Post Run actions/setup-java@v4
+  * Post Run actions/checkout@v4
+X main Build TPDocApp · 35358996386
+Triggered via push about 2 minutes ago
+
+JOBS
+X build in 2m1s (ID 105645289076)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-java@v4
+  ✓ Run gradle/actions/setup-gradle@v3
+  ✓ Run chmod +x gradlew
+  X Unit tests
+  - Assemble debug APK
+  - Run actions/upload-artifact@v4
+  ✓ Post Run gradle/actions/setup-gradle@v3
+  ✓ Post Run actions/setup-java@v4
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-java@v4, gradle/actions/setup-gradle@v3. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+build: .github#2
+
+! Failed to save cache entry with path '/home/runner/.gradle/caches,/home/runner/.gradle/notifications,/home/runner/.gradle/.setup-gradle' and key: gradle-home-v1|Linux|build[e21e70e4cca82eafaf4184b613c4ea98]-cc18ac082700329b68457d718b64c47225896d9f: Error: <h2>Our services aren't available right now</h2><p>We're working to restore all services as soon as possible. Please check back soon.</p>0yFCtagAAAAD4fI0ZWQDkT4hn+70896DNUEhMMzBFREdFMDIyMABFZGdl
+build: .github#38
+
+! Failed to save cache entry with path '/home/runner/.gradle/caches/transforms-4/*/
+/home/runner/.gradle/caches/*/transforms/*/' and key: gradle-transforms-v1-90a61a538863e0c78b5d9ed76f58ab69: Error: <h2>Our services aren't available right now</h2><p>We're working to restore all services as soon as possible. Please check back soon.</p>0yFCtagAAAACPfk6x+hsgRqIUnGCuIcrdUEhMMzBFREdFMDIyMQBFZGdl
+build: .github#34
+
+! Failed to save cache entry with path '/home/runner/.gradle/caches/modules-*/files-*/*/*/*/*' and key: gradle-dependencies-v1-ee2b754299d7607cca48544cf96eee4f: Error: <h2>Our services aren't available right now</h2><p>We're working to restore all services as soon as possible. Please check back soon.</p>0x1CtagAAAACQuLWEmcYuTJYHZYgGc3UiUEhMMzBFREdFMDExMwBFZGdl
+build: .github#33
+
+! Failed to save cache entry with path '/home/runner/.gradle/caches/*/kotlin-dsl/accessors/*/
+/home/runner/.gradle/caches/*/kotlin-dsl/scripts/*/' and key: gradle-kotlin-dsl-v1-8ee88188632e3306cb4500c355878a71: Error: <h2>Our services aren't available right now</h2><p>We're working to restore all services as soon as possible. Please check back soon.</p>0xVCtagAAAAC16wozP5VhQrvWNUVjo2+2UEhMMzBFREdFMDQxOABFZGdl
+build: .github#27
+
+! Failed to save cache entry with path '/home/runner/.gradle/caches/*/groovy-dsl/*/' and key: gradle-groovy-dsl-v1-571862c491b3f8e35c2103eb590b4c52: Error: <h2>Our services aren't available right now</h2><p>We're working to restore all services as soon as possible. Please check back soon.</p>0xVCtagAAAAACri3MCLmVR65QmKtNkFqCUEhMMzBFREdFMDEyMABFZGdl
+build: .github#26
+
+! Failed to save cache entry with path '/home/runner/.gradle/caches/jars-*/*/' and key: gradle-instrumented-jars-v1-2b1406f03e5d68e4f5786f9c71d76e99: Error: <h2>Our services aren't available right now</h2><p>We're working to restore all services as soon as possible. Please check back soon.</p>0xVCtagAAAAD0+Y0/zZW4S5ilicLh53JkUEhMMzBFREdFMDIxOABFZGdl
+build: .github#25
+
+! Failed to save cache entry with path '/home/runner/.gradle/wrapper/dists/gradle-8.7-bin/bhs2wmbdwecv87pi65oeuq5iu' and key: gradle-wrapper-zips-v1-09242415bccaaeb0f8be2fc74b9ad33a: Error: <h2>Our services aren't available right now</h2><p>We're working to restore all services as soon as possible. Please check back soon.</p>0xVCtagAAAADjNLpUqTOwQLDrNhfg4oifUEhMMzBFREdFMDQxOQBFZGdl
+build: .github#16
+
+! Failed to save cache entry with path '/home/runner/.gradle/caches/8.7/generated-gradle-jars/gradle-api-8.7.jar' and key: gradle-generated-gradle-jars-v1-d6d47bedd9337a0be6f3a426277e63ee: Error: <h2>Our services aren't available right now</h2><p>We're working to restore all services as soon as possible. Please check back soon.</p>0xVCtagAAAADv6tOALopwRIJ1MdaDBqA8UEhMMzBFREdFMDEyMABFZGdl
+build: .github#15
+
+X Process completed with exit code 1.
+build: .github#274
+
+! Failed to restore gradle-home-v1|Linux|build[e21e70e4cca82eafaf4184b613c4ea98]-cc18ac082700329b68457d718b64c47225896d9f: Error: Cache service responded with 400
+build: .github#30
+
+! setup-java v4 is deprecated and will no longer receive updates. Please migrate to actions/setup-java@v5.
+build: .github#15
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+build: .github#1
+
+WATCH_EXIT:1

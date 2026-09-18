@@ -53,7 +53,6 @@ fun HomeScreen(onNavigate: (String) -> Unit) {
     ScreenScaffold(
         title = "TP Doc Indonesia",
         onBack = null,
-        bottomBar = null,
     ) {
         Card(
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),
