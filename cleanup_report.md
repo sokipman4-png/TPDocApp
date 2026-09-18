@@ -95,6 +95,6 @@ menu ⋮ (Export/Backup/Restore). Niet verwijderd.
 
 ## 5. Verificatie eindstatus
 
-- `./gradlew :app:testDebugUnitTest` — 67 tests verwacht (na CI)
-- `./gradlew :app:assembleDebug` — verwacht sukses (na CI)
-- CI runnummer + artifact link: zie verification_v2.md (update na groene run)
+- `./gradlew :app:testDebugUnitTest` — 90 tests, 0 failures (run 35384010767, verified)
+- `./gradlew :app:assembleDebug` — sukses (run 35384010767, verified; APK in artifact tpdoc-debug-apk id=10563321093)
+- CI runnummer + artifact link: zie verification_v2.md
