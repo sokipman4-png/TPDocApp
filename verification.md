@@ -6,9 +6,9 @@ Metode verifikasi:
 - **S** = Fitur diimplementasi di source code (commit final) dan konten teruji lewat pencarian/unit test
 - Semua angka threshold sesuai dokumen spesifikasi (50M / 20M / 11T, strictly greater).
 
-CI final: run **35360339568** (success) — https://github.com/sokipman4-png/TPDocApp/actions/runs/35360339568
+CI final: run **35360915392** (success) — https://github.com/sokipman4-png/TPDocApp/actions/runs/35360915392
 Unit test: **33 tests, 0 failures, 0 errors** (JUnit XML dari run final)
-Artifact: **tpdoc-debug-apk** (app-debug.apk, 15,4 MB) — https://github.com/sokipman4-png/TPDocApp/actions/runs/35360339568/artifacts/10554333790
+Artifact: **tpdoc-debug-apk** (app-debug.apk, 15,4 MB) — https://github.com/sokipman4-png/TPDocApp/actions/runs/35360915392/artifacts/10555125040
 
 | Requirement ID | Requirement Dokumen | Fitur Aplikasi | Test Case | Status | Bukti |
 |---|---|---|---|---|---|
