@@ -40,6 +40,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.tpdoc.app.ui.viewmodel.ExportViewModel
 import com.tpdoc.app.ui.viewmodel.SettingsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -47,8 +48,10 @@ import com.tpdoc.app.ui.viewmodel.SettingsViewModel
 fun SettingsScreen(
     onBack: () -> Unit,
     vm: SettingsViewModel = viewModel(),
+    exportVm: ExportViewModel = viewModel(),
 ) {
     val state by vm.uiState.collectAsState()
+    val exportState by exportVm.uiState.collectAsState()
     var showPromptPreview by remember { mutableStateOf(false) }
     var keyInput by remember { mutableStateOf("") }
 
@@ -240,6 +243,24 @@ fun SettingsScreen(
                 }
             }
 
+            // Section: Backup & Restore
+            item {
+                SectionTitle("Backup & Restore")
+                Card(modifier = Modifier.fillMaxWidth()) {
+                    Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Text(
+                            "Data 100% lokal. Backup rutin untuk menghindari kehilangan data jika HP hilang/rusak.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Button(onClick = { exportVm.backupJson() }) { Text("Backup (JSON)") }
+                            OutlinedButton(onClick = { exportVm.pickRestoreFile() }) { Text("Restore (JSON)") }
+                        }
+                    }
+                }
+            }
+
             // Section: Disclaimer
             item {
                 HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
@@ -261,6 +282,35 @@ fun SettingsScreen(
             confirmButton = {
                 TextButton(onClick = { showPromptPreview = false }) { Text("Tutup") }
             },
+        )
+    }
+
+    // Status export/backup
+    exportState.statusMessage?.let { msg ->
+        AlertDialog(
+            onDismissRequest = { exportVm.clearStatus() },
+            title = { Text("Sukses") },
+            text = { Text(msg) },
+            confirmButton = { TextButton(onClick = { exportVm.clearStatus() }) { Text("OK") } },
+        )
+    }
+    exportState.error?.let { msg ->
+        AlertDialog(
+            onDismissRequest = { exportVm.clearStatus() },
+            title = { Text("Error") },
+            text = { Text(msg) },
+            confirmButton = { TextButton(onClick = { exportVm.clearStatus() }) { Text("OK") } },
+        )
+    }
+
+    // Restore confirmation dialog
+    if (exportState.showRestoreConfirm) {
+        AlertDialog(
+            onDismissRequest = { exportVm.cancelRestore() },
+            title = { Text("Konfirmasi Restore") },
+            text = { Text("Data existing akan ditimpa!\n\n${exportState.pendingRestore.size} perusahaan akan terimport dari backup. Data saat ini akan dihapus. Lanjut?") },
+            confirmButton = { TextButton(onClick = { exportVm.confirmRestore() }) { Text("Lanjut", color = MaterialTheme.colorScheme.error) } },
+            dismissButton = { TextButton(onClick = { exportVm.cancelRestore() }) { Text("Batal") } },
         )
     }
 }

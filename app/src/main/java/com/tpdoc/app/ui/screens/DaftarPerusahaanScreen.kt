@@ -15,12 +15,16 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Backup
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Dashboard
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.FileDownload
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.PictureAsPdf
+import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -52,6 +56,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.tpdoc.app.data.room.Perusahaan
 import com.tpdoc.app.ui.components.ScreenScaffold
+import com.tpdoc.app.ui.viewmodel.ExportViewModel
 import com.tpdoc.app.ui.viewmodel.PerusahaanViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -62,11 +67,14 @@ fun DaftarPerusahaanScreen(
     onBack: (() -> Unit)? = null,
     onDashboard: (() -> Unit)? = null,
     vm: PerusahaanViewModel = viewModel(),
+    exportVm: ExportViewModel = viewModel(),
 ) {
     val state by vm.uiState.collectAsState()
     val list by vm.listFlow.collectAsState()
+    val exportState by exportVm.uiState.collectAsState()
     var showDeleteDialog by remember { mutableStateOf<Perusahaan?>(null) }
     var showFilterMenu by remember { mutableStateOf(false) }
+    var showExportMenu by remember { mutableStateOf(false) }
     var searchText by remember { mutableStateOf("") }
 
     ScreenScaffold(
@@ -92,6 +100,32 @@ fun DaftarPerusahaanScreen(
                         onClick = { vm.setFilter(s, state.filterNegara); showFilterMenu = false },
                     )
                 }
+            }
+            // Menu export/backup/restore
+            IconButton(onClick = { showExportMenu = true }) {
+                Icon(Icons.Default.MoreVert, contentDescription = "Menu Data")
+            }
+            DropdownMenu(expanded = showExportMenu, onDismissRequest = { showExportMenu = false }) {
+                DropdownMenuItem(
+                    leadingIcon = { Icon(Icons.Default.FileDownload, contentDescription = null) },
+                    text = { Text("Export CSV") },
+                    onClick = { exportVm.exportCsv(); showExportMenu = false },
+                )
+                DropdownMenuItem(
+                    leadingIcon = { Icon(Icons.Default.PictureAsPdf, contentDescription = null) },
+                    text = { Text("Export PDF") },
+                    onClick = { exportVm.exportPdf(); showExportMenu = false },
+                )
+                DropdownMenuItem(
+                    leadingIcon = { Icon(Icons.Default.Backup, contentDescription = null) },
+                    text = { Text("Backup Data (JSON)") },
+                    onClick = { exportVm.backupJson(); showExportMenu = false },
+                )
+                DropdownMenuItem(
+                    leadingIcon = { Icon(Icons.Default.Restore, contentDescription = null) },
+                    text = { Text("Restore Data (JSON)") },
+                    onClick = { exportVm.pickRestoreFile(); showExportMenu = false },
+                )
             }
             if (state.isSearching || state.filterStatus != null || state.filterNegara != null) {
                 IconButton(onClick = { vm.clearSearch(); vm.clearFilters(); searchText = "" }) {
@@ -239,6 +273,43 @@ fun DaftarPerusahaanScreen(
                 TextButton(onClick = { showDeleteDialog = null }) {
                     Text("Batal")
                 }
+            },
+        )
+    }
+
+    // Status export/backup
+    exportState.statusMessage?.let { msg ->
+        AlertDialog(
+            onDismissRequest = { exportVm.clearStatus() },
+            title = { Text("Sukses") },
+            text = { Text(msg) },
+            confirmButton = {
+                TextButton(onClick = { exportVm.clearStatus() }) { Text("OK") }
+            },
+        )
+    }
+    exportState.error?.let { msg ->
+        AlertDialog(
+            onDismissRequest = { exportVm.clearStatus() },
+            title = { Text("Error") },
+            text = { Text(msg) },
+            confirmButton = {
+                TextButton(onClick = { exportVm.clearStatus() }) { Text("OK") }
+            },
+        )
+    }
+
+    // Restore confirmation dialog
+    if (exportState.showRestoreConfirm) {
+        AlertDialog(
+            onDismissRequest = { exportVm.cancelRestore() },
+            title = { Text("Konfirmasi Restore") },
+            text = { Text("Data existing akan ditimpa!\n\n${exportState.pendingRestore.size} perusahaan akan terimport dari backup. Data saat ini akan dihapus. Lanjut?") },
+            confirmButton = {
+                TextButton(onClick = { exportVm.confirmRestore() }) { Text("Lanjut", color = MaterialTheme.colorScheme.error) }
+            },
+            dismissButton = {
+                TextButton(onClick = { exportVm.cancelRestore() }) { Text("Batal") }
             },
         )
     }

@@ -18,14 +18,22 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Business
+import androidx.compose.material.icons.filled.PictureAsPdf
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -46,6 +54,7 @@ import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.tpdoc.app.data.room.Perusahaan
 import com.tpdoc.app.ui.viewmodel.DashboardViewModel
+import com.tpdoc.app.ui.viewmodel.ExportViewModel
 import com.tpdoc.app.ui.viewmodel.StatusKepatuhan
 
 @Composable
@@ -53,38 +62,62 @@ fun DashboardScreen(
     onBack: (() -> Unit)? = null,
     onSettings: (() -> Unit)? = null,
     vm: DashboardViewModel = viewModel(),
+    exportVm: ExportViewModel = viewModel(),
 ) {
     val state by vm.uiState.collectAsState()
+    val exportState by exportVm.uiState.collectAsState()
 
-    LazyColumn(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Dashboard Grup") },
+                navigationIcon = {
+                    if (onBack != null) {
+                        IconButton(onClick = onBack) {
+                            Icon(Icons.Default.ArrowBack, contentDescription = "Kembali")
+                        }
+                    }
+                },
+                actions = {
+                    if (onSettings != null) {
+                        IconButton(onClick = onSettings) {
+                            Icon(Icons.Default.Settings, contentDescription = "Pengaturan")
+                        }
+                    }
+                    IconButton(onClick = { exportVm.exportPdf() }) {
+                        Icon(Icons.Default.PictureAsPdf, contentDescription = "Export PDF Grup")
+                    }
+                    IconButton(onClick = { exportVm.shareCsv() }) {
+                        Icon(Icons.Default.Share, contentDescription = "Share Laporan")
+                    }
+                },
+                colors = androidx.compose.material3.TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
+                    actionIconContentColor = MaterialTheme.colorScheme.onPrimary,
+                ),
+            )
+        },
+    ) { padding ->
+        LazyColumn(
+            modifier = Modifier.fillMaxSize().padding(padding).padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
         // Header
         item {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Column {
-                    Text(
-                        "Dashboard Grup",
-                        style = MaterialTheme.typography.headlineSmall,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary,
-                    )
-                    Text(
-                        "${state.totalPerusahaan} perusahaan terdaftar",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-                if (onSettings != null) {
-                    IconButton(onClick = onSettings) {
-                        Icon(Icons.Default.Settings, contentDescription = "Pengaturan")
-                    }
-                }
+            Column {
+                Text(
+                    "Dashboard Grup",
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+                Text(
+                    "${state.totalPerusahaan} perusahaan terdaftar",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
             }
         }
 
@@ -249,6 +282,25 @@ fun DashboardScreen(
                     }
                 }
             }
+        }
+        }
+
+        // Status messages
+        exportState.statusMessage?.let { msg ->
+            AlertDialog(
+                onDismissRequest = { exportVm.clearStatus() },
+                title = { Text("Sukses") },
+                text = { Text(msg) },
+                confirmButton = { TextButton(onClick = { exportVm.clearStatus() }) { Text("OK") } },
+            )
+        }
+        exportState.error?.let { msg ->
+            AlertDialog(
+                onDismissRequest = { exportVm.clearStatus() },
+                title = { Text("Error") },
+                text = { Text(msg) },
+                confirmButton = { TextButton(onClick = { exportVm.clearStatus() }) { Text("OK") } },
+            )
         }
     }
 }

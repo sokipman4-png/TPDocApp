@@ -62,6 +62,12 @@ interface PerusahaanDao {
     @Query("DELETE FROM perusahaan WHERE id = :id")
     suspend fun deleteById(id: Long)
 
+    @Query("DELETE FROM perusahaan")
+    suspend fun deleteAll()
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(items: List<Perusahaan>)
+
     @Query("SELECT DISTINCT negara FROM perusahaan ORDER BY negara")
     fun observeAllNegara(): Flow<List<String>>
 }

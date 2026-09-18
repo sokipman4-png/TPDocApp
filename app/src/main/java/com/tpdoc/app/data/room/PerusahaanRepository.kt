@@ -37,5 +37,11 @@ class PerusahaanRepository(context: Context) {
 
     suspend fun deleteById(id: Long) = dao.deleteById(id)
 
+    /** Ganti seluruh data (untuk restore backup). */
+    suspend fun replaceAll(items: List<Perusahaan>) {
+        dao.deleteAll()
+        dao.insertAll(items)
+    }
+
     fun anakByParent(parentId: Long): Flow<List<Perusahaan>> = dao.observeAnakByParent(parentId)
 }

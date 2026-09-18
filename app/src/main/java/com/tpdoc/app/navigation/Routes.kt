@@ -28,8 +28,17 @@ object Routes {
     fun detailPerusahaan(perusahaanId: Long): String =
         "detail_perusahaan/$perusahaanId"
 
-    /** Rute layar utama yang tampil di bottom navigation. */
+    /** Rute layar utama untuk bottom navigation. */
     val TABS = listOf(DAFTAR_PERUSAHAAN, HOME, KALKULATOR, DOKUMEN, BERELASI)
+
+    /** Semua rute statis (tanpa arg) yang didaflar di NavHost. */
+    val STATICS = listOf(
+        HOME, KRITERIA, KALKULATOR, BERELASI, TRANSAKSI, DOKUMEN, SANKSI,
+        KESIMPULAN, NOTIFIKASI, CARI, DAFTAR_PERUSAHAAN, DASHBOARD, SETTINGS,
+    )
+
+    /** Semua pattern rute (potentially dengan {arg}) — untuk validasi unik. */
+    val ALL_PATTERNS: Set<String> = (STATICS + listOf(FORM_PERUSAHAAN, DETAIL_PERUSAHAAN, ANALISIS)).toSet()
 
     fun isTab(route: String?): Boolean = route in TABS
 }

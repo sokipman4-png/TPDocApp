@@ -16,10 +16,14 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountTree
 import androidx.compose.material.icons.filled.Analytics
+import androidx.compose.material.icons.filled.AddAPhoto
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Business
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.PictureAsPdf
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -29,6 +33,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -42,8 +47,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.tpdoc.app.data.room.Perusahaan
 import com.tpdoc.app.data.room.PerusahaanRepository
+import com.tpdoc.app.ui.viewmodel.ExportViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,11 +59,13 @@ fun DetailPerusahaanScreen(
     onEdit: (Long) -> Unit,
     onBack: () -> Unit,
     onAnalisis: ((Long) -> Unit)? = null,
+    exportVm: ExportViewModel = viewModel(),
     repo: PerusahaanRepository = PerusahaanRepository(
         androidx.compose.ui.platform.LocalContext.current
     ),
 ) {
     val perusahaan by repo.byId(perusahaanId).collectAsState(initial = null)
+    val exportState by exportVm.uiState.collectAsState()
     val anakList by perusahaan?.let { p ->
         repo.anakByParent(p.id)
     }?.collectAsState(initial = emptyList()) ?: remember { mutableStateOf(emptyList()) }
@@ -75,6 +84,15 @@ fun DetailPerusahaanScreen(
                         IconButton(onClick = { onAnalisis(perusahaanId) }) {
                             Icon(Icons.Default.Analytics, contentDescription = "Analisis")
                         }
+                    }
+                    IconButton(onClick = { exportVm.pickLogo(perusahaanId) }) {
+                        Icon(Icons.Default.AddAPhoto, contentDescription = "Upload Logo")
+                    }
+                    IconButton(onClick = { exportVm.exportPdfOne(perusahaan) }) {
+                        Icon(Icons.Default.PictureAsPdf, contentDescription = "Export PDF Perusahaan")
+                    }
+                    IconButton(onClick = { exportVm.sharePerusahaan(perusahaan) }) {
+                        Icon(Icons.Default.Share, contentDescription = "Share Profil")
                     }
                     IconButton(onClick = { onEdit(perusahaanId) }) {
                         Icon(Icons.Default.Edit, contentDescription = "Edit")
@@ -188,6 +206,24 @@ fun DetailPerusahaanScreen(
                 }
             }
         }
+    }
+
+    // Status messages
+    exportState.statusMessage?.let { msg ->
+        AlertDialog(
+            onDismissRequest = { exportVm.clearStatus() },
+            title = { Text("Sukses") },
+            text = { Text(msg) },
+            confirmButton = { TextButton(onClick = { exportVm.clearStatus() }) { Text("OK") } },
+        )
+    }
+    exportState.error?.let { msg ->
+        AlertDialog(
+            onDismissRequest = { exportVm.clearStatus() },
+            title = { Text("Error") },
+            text = { Text(msg) },
+            confirmButton = { TextButton(onClick = { exportVm.clearStatus() }) { Text("OK") } },
+        )
     }
 }
 
