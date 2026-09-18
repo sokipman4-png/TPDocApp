@@ -18,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.tpdoc.app.data.ContentData
 import com.tpdoc.app.ui.components.ScreenScaffold
 import com.tpdoc.app.ui.viewmodel.PencarianViewModel
 

@@ -5,16 +5,13 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.tpdoc.app.data.ai.ApiKeyManager
 import com.tpdoc.app.data.ai.OpenRouterClient
-import com.tpdoc.app.data.ai.OpenRouterModel
 import com.tpdoc.app.data.datastore.SettingsRepository
 import com.tpdoc.app.data.room.ModelCache
 import com.tpdoc.app.data.room.ModelCacheDao
 import com.tpdoc.app.data.room.AppDatabase
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 data class SettingsUiState(

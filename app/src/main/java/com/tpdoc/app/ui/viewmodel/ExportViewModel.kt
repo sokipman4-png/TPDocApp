@@ -1,22 +1,24 @@
 package com.tpdoc.app.ui.viewmodel
 
-import androidx.activity.ActivityResultContracts
-import androidx.core.net.Uri
+import android.app.Application
+import android.content.Context
+import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.unit.Unit
-import android.app.Application
 import com.tpdoc.app.data.export.CsvCodec
 import com.tpdoc.app.data.export.ExportUtils
 import com.tpdoc.app.data.export.JsonCodec
 import com.tpdoc.app.data.export.LogoValidator
 import com.tpdoc.app.data.room.Perusahaan
 import com.tpdoc.app.data.room.PerusahaanRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
+import java.io.IOException
 
 data class ExportUiState(
     val statusMessage: String? = null,
@@ -27,25 +29,59 @@ data class ExportUiState(
 )
 
 /**
+ * State machine restore yang murni (tanpa Android/Room) — unit-testable di JVM.
+ *
+ * Kontrak alur restore:
+ * 1. Memilih file backup HANYA menghasilkan state "tampilkan dialog konfirmasi".
+ * 2. Import data (replaceAll) hanya terjadi lewat [ExportViewModel.confirmRestore],
+ *    yang menolak jalan jika pendingRestore kosong.
+ * Jadi dialog konfirmasi SELALU muncul sebelum data existing ditimpa.
+ */
+internal object RestoreFlow {
+
+    fun onBackupPicked(jsonText: String): ExportUiState {
+        if (jsonText.isBlank()) {
+            return ExportUiState(error = "File backup kosong atau tidak valid.")
+        }
+        return try {
+            val restored = JsonCodec.decode(jsonText)
+            if (restored.isEmpty()) {
+                ExportUiState(error = "File backup kosong atau tidak valid.")
+            } else {
+                ExportUiState(showRestoreConfirm = true, pendingRestore = restored)
+            }
+        } catch (e: Exception) {
+            ExportUiState(error = "Gagal membaca file backup: ${e.message}")
+        }
+    }
+}
+
+/**
  * ViewModel export/backup/restore/share.
- * Export via SAF (ActivityResultContracts.CreateDocument/OpenDocument);
- * share via FileProvider + Intent.ACTION_SEND.
+ *
+ * - Export & backup: tulis ke URI hasil SAF CreateDocument (launcher di screen);
+ *   tulis lewat ContentResolver.openOutputStream — API Android standar.
+ * - Restore: baca URI hasil SAF OpenDocument → parse JSON → dialog konfirmasi → import.
+ * - Share: FileProvider + Intent.ACTION_SEND (file di cacheDir/share).
+ * - Logo: baca + validasi (JPG/PNG max 5MB) + simpan ke cacheDir/logos.
  */
 class ExportViewModel(application: Application) : AndroidViewModel(application) {
 
+    private val ctx: Context = application
+    private val app: Application = application
     private val repo = PerusahaanRepository(application)
     private val _uiState = MutableStateFlow(ExportUiState())
     val uiState: StateFlow<ExportUiState> = _uiState.asStateFlow()
 
     // ---- Export via SAF ----
 
-    fun exportCsv() {
+    fun exportCsvTo(uri: Uri) {
         viewModelScope.launch {
             setBusy()
             try {
-                val all = repo.getAll()
-                saveViaSaf("tpdoc_perusahaan.csv", "text/csv", CsvCodec.buildCsv(all))
-                notifyOk("CSV eksporteri sukses.")
+                val bytes = withContext(Dispatchers.IO) { CsvCodec.buildCsvBytes(repo.getAll()) }
+                writeToUri(uri, bytes)
+                notifyOk("CSV terexport sukses.")
             } catch (e: Exception) {
                 notifyError("Gagal export CSV: ${e.message}")
             } finally {
@@ -54,13 +90,13 @@ class ExportViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    fun exportPdf() {
+    fun exportPdfTo(uri: Uri) {
         viewModelScope.launch {
             setBusy()
             try {
-                val all = repo.getAll()
-                saveViaSaf("tpdoc_laporan_grup.pdf", "application/pdf", ExportUtils.pdfBytes(all))
-                notifyOk("PDF grup eksporteri sukses.")
+                val bytes = withContext(Dispatchers.IO) { ExportUtils.pdfBytes(repo.getAll()) }
+                writeToUri(uri, bytes)
+                notifyOk("PDF grup terexport sukses.")
             } catch (e: Exception) {
                 notifyError("Gagal export PDF: ${e.message}")
             } finally {
@@ -69,12 +105,14 @@ class ExportViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    fun exportPdfOne(perusahaan: Perusahaan) {
+    /** PDF satu perusahaan (untuk tombol "Export PDF Perusahaan"). */
+    fun exportPdfOneTo(uri: Uri, perusahaan: Perusahaan) {
         viewModelScope.launch {
             setBusy()
             try {
-                saveViaSaf("tpdoc_${perusahaan.nama.slugify()}.pdf", "application/pdf", ExportUtils.pdfBytesOne(perusahaan))
-                notifyOk("PDF perusahaan eksporteri sukses.")
+                val bytes = withContext(Dispatchers.IO) { ExportUtils.pdfBytesOne(perusahaan) }
+                writeToUri(uri, bytes)
+                notifyOk("PDF perusahaan terexport sukses.")
             } catch (e: Exception) {
                 notifyError("Gagal export PDF perusahaan: ${e.message}")
             } finally {
@@ -83,15 +121,13 @@ class ExportViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    // ---- Backup (JSON) ----
-
-    fun backupJson() {
+    fun backupJsonTo(uri: Uri) {
         viewModelScope.launch {
             setBusy()
             try {
-                val all = repo.getAll()
-                saveViaSaf("tpdoc_backup.json", "application/json", JsonCodec.encode(all))
-                notifyOk("Backup JSON eksporteri sukses.")
+                val text = withContext(Dispatchers.IO) { JsonCodec.encode(repo.getAll()) }
+                writeToUri(uri, text.toByteArray())
+                notifyOk("Backup JSON terexport sukses.")
             } catch (e: Exception) {
                 notifyError("Gagal backup JSON: ${e.message}")
             } finally {
@@ -102,35 +138,23 @@ class ExportViewModel(application: Application) : AndroidViewModel(application) 
 
     // ---- Restore ----
 
-    fun pickRestoreFile() {
+    /** Baca file backup dari URI SAF, parse, lalu tampilkan dialog konfirmasi. */
+    fun restoreFrom(uri: Uri) {
         viewModelScope.launch {
             setBusy()
             try {
-                val uri = application.startActivityForResult(
-                    ActivityResultContracts.OpenDocument.withType("application/json"),
-                    Unit.Default,
-                ).requireSuccess().getOrThrow()
-
-                val jsonText = uri.getContentHub().use { hub ->
-                    hub.readText("application/json")
-                }
-                val restored = JsonCodec.decode(jsonText)
-                if (restored.isEmpty()) {
-                    notifyError("File backup kosong atau tidak valid.")
-                } else {
-                    _uiState.value = _uiState.value.copy(
-                        pendingRestore = restored,
-                        showRestoreConfirm = true,
-                    )
-                }
+                val jsonText = readFromUri(uri)
+                _uiState.value = RestoreFlow.onBackupPicked(jsonText)
             } catch (e: Exception) {
                 notifyError("Gagal baca file backup: ${e.message}")
             } finally {
-                clearBusy()
+                // Menjaga busy=false bila state baru tidak meng-overwrite-nya
+                if (_uiState.value.busy) clearBusy()
             }
         }
     }
 
+    /** Satu-satunya jalur import: mengganti seluruh data. Ditolak jika tidak ada pending. */
     fun confirmRestore() {
         viewModelScope.launch {
             val pending = _uiState.value.pendingRestore
@@ -157,9 +181,11 @@ class ExportViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch {
             try {
                 val all = repo.getAll()
-                val b = CsvCodec.buildCsvBytes(all)
-                val file = writeCacheFile("share", "tpdoc_perusahaan.csv", b)
-                ExportUtils.shareFile(application, file, "text/csv", "Deel CSV")
+                val bytes = withContext(Dispatchers.IO) { CsvCodec.buildCsvBytes(all) }
+                val file = withContext(Dispatchers.IO) {
+                    writeCacheFile("share", "tpdoc_perusahaan.csv", bytes)
+                }
+                ExportUtils.shareFile(ctx, file, "text/csv", "Share CSV")
             } catch (e: Exception) {
                 notifyError("Gagal share CSV: ${e.message}")
             }
@@ -169,9 +195,11 @@ class ExportViewModel(application: Application) : AndroidViewModel(application) 
     fun sharePerusahaan(perusahaan: Perusahaan) {
         viewModelScope.launch {
             try {
-                val b = CsvCodec.buildCsvBytes(listOf(perusahaan))
-                val file = writeCacheFile("share", "tpdoc_${perusahaan.nama.slugify()}.csv", b)
-                ExportUtils.shareFile(application, file, "text/csv", "Deel Profil ${perusahaan.nama}")
+                val bytes = withContext(Dispatchers.IO) { CsvCodec.buildCsvBytes(listOf(perusahaan)) }
+                val file = withContext(Dispatchers.IO) {
+                    writeCacheFile("share", "tpdoc_${perusahaan.nama.slugify()}.csv", bytes)
+                }
+                ExportUtils.shareFile(ctx, file, "text/csv", "Share Profil ${perusahaan.nama}")
             } catch (e: Exception) {
                 notifyError("Gagal share perusahaan: ${e.message}")
             }
@@ -180,32 +208,29 @@ class ExportViewModel(application: Application) : AndroidViewModel(application) 
 
     // ---- Logo upload ----
 
-    /** Pilih file logo via SAF GetContent, validasi, simpan, dan update perusahaan. */
-    fun pickLogo(perusahaanId: Long) {
+    /** Baca logo dari URI SAF GetContent, validasi format+ukuran, simpan, update perusahaan. */
+    fun saveLogoFromUri(perusahaanId: Long, uri: Uri) {
         viewModelScope.launch {
             try {
-                val uri = application.startActivityForResult(
-                    ActivityResultContracts.GetContent,
-                    Unit.Default,
-                ).requireSuccess().getOrThrow()
-
-                val mime = uri.getMimeType()
+                val resolver = ctx.contentResolver
+                val mime = resolver.getType(uri)
                 if (mime == null || mime.isBlank()) {
-                    notifyError("File tidak memiliki tipe. Pilih JPG/PNG.")
+                    notifyError("File tidak memiliki tipe. Pilih file JPG atau PNG.")
                     return@launch
                 }
-                if (!LogoValidator.isValidMime(mime)) {
-                    notifyError("Format file tidak didukung. Hanya JPG dan PNG.")
-                    return@launch
+                val bytes = withContext(Dispatchers.IO) {
+                    val input = resolver.openInputStream(uri) ?: throw IOException("Tidak bisa membaca file logo")
+                    input.use { it.readBytes() }
                 }
-                val bytes = uri.getContentHub().use { hub -> hub.read(mime) }
                 val validationError = LogoValidator.validate(mime, bytes.size.toLong())
                 if (validationError != null) {
                     notifyError(validationError)
                     return@launch
                 }
                 val ext = if (mime.lowercase() == "image/png") "png" else "jpg"
-                val file = writeCacheFile("logos", "logo_${perusahaanId}_${System.currentTimeMillis()}.$ext", bytes)
+                val file = withContext(Dispatchers.IO) {
+                    writeCacheFile("logos", "logo_${perusahaanId}_${System.currentTimeMillis()}.$ext", bytes)
+                }
                 val p = repo.getById(perusahaanId) ?: return@launch
                 repo.update(p.copy(logoPath = file.path))
                 notifyOk("Logo terupload sukses.")
@@ -221,20 +246,24 @@ class ExportViewModel(application: Application) : AndroidViewModel(application) 
 
     // ---- Helpers ----
 
-    private suspend fun saveViaSaf(suggestedName: String, mimeType: String, text: String) {
-        val contract = ActivityResultContracts.CreateDocument.withName(suggestedName).withType(mimeType)
-        val uri = application.startActivityForResult(contract, Unit.Default).requireSuccess().getOrThrow()
-        uri.getContentHub(Uri.Mode.Append).use { hub -> hub.writeText(mimeType, text) }
+    private suspend fun writeToUri(uri: Uri, bytes: ByteArray) {
+        withContext(Dispatchers.IO) {
+            val out = ctx.contentResolver.openOutputStream(uri)
+                ?: throw IOException("Tidak bisa membuka file tujuan")
+            out.use { it.write(bytes) }
+        }
     }
 
-    private suspend fun saveViaSaf(suggestedName: String, mimeType: String, bytes: ByteArray) {
-        val contract = ActivityResultContracts.CreateDocument.withName(suggestedName).withType(mimeType)
-        val uri = application.startActivityForResult(contract, Unit.Default).requireSuccess().getOrThrow()
-        uri.getContentHub(Uri.Mode.Append).use { hub -> hub.write(mimeType, bytes) }
+    private suspend fun readFromUri(uri: Uri): String {
+        return withContext(Dispatchers.IO) {
+            val input = ctx.contentResolver.openInputStream(uri)
+                ?: throw IOException("Tidak bisa membuka file sumber")
+            input.bufferedReader().use { it.readText() }
+        }
     }
 
     private fun writeCacheFile(dirName: String, fileName: String, bytes: ByteArray): File {
-        val dir = File(application.cacheDir, dirName)
+        val dir = File(app.cacheDir, dirName)
         if (!dir.exists()) dir.mkdirs()
         val file = File(dir, fileName)
         file.outputStream().use { out -> out.write(bytes) }

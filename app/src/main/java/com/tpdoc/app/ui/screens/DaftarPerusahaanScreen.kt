@@ -1,5 +1,7 @@
 package com.tpdoc.app.ui.screens
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -27,7 +28,6 @@ import androidx.compose.material.icons.filled.PictureAsPdf
 import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
@@ -37,13 +37,10 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -77,6 +74,20 @@ fun DaftarPerusahaanScreen(
     var showExportMenu by remember { mutableStateOf(false) }
     var searchText by remember { mutableStateOf("") }
 
+    // Launcher SAF: URI hasil CreateDocument/OpenDocument diberikan ke ViewModel.
+    val exportCsvLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.CreateDocument("text/csv"),
+    ) { uri -> uri?.let { exportVm.exportCsvTo(it) } }
+    val exportPdfLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.CreateDocument("application/pdf"),
+    ) { uri -> uri?.let { exportVm.exportPdfTo(it) } }
+    val backupLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.CreateDocument("application/json"),
+    ) { uri -> uri?.let { exportVm.backupJsonTo(it) } }
+    val restoreLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocument(),
+    ) { uri -> uri?.let { exportVm.restoreFrom(it) } }
+
     ScreenScaffold(
         title = "Daftar Perusahaan",
         onBack = onBack,
@@ -109,22 +120,22 @@ fun DaftarPerusahaanScreen(
                 DropdownMenuItem(
                     leadingIcon = { Icon(Icons.Default.FileDownload, contentDescription = null) },
                     text = { Text("Export CSV") },
-                    onClick = { exportVm.exportCsv(); showExportMenu = false },
+                    onClick = { exportCsvLauncher.launch("tpdoc_perusahaan.csv"); showExportMenu = false },
                 )
                 DropdownMenuItem(
                     leadingIcon = { Icon(Icons.Default.PictureAsPdf, contentDescription = null) },
                     text = { Text("Export PDF") },
-                    onClick = { exportVm.exportPdf(); showExportMenu = false },
+                    onClick = { exportPdfLauncher.launch("tpdoc_laporan_grup.pdf"); showExportMenu = false },
                 )
                 DropdownMenuItem(
                     leadingIcon = { Icon(Icons.Default.Backup, contentDescription = null) },
                     text = { Text("Backup Data (JSON)") },
-                    onClick = { exportVm.backupJson(); showExportMenu = false },
+                    onClick = { backupLauncher.launch("tpdoc_backup.json"); showExportMenu = false },
                 )
                 DropdownMenuItem(
                     leadingIcon = { Icon(Icons.Default.Restore, contentDescription = null) },
                     text = { Text("Restore Data (JSON)") },
-                    onClick = { exportVm.pickRestoreFile(); showExportMenu = false },
+                    onClick = { restoreLauncher.launch(arrayOf("application/json")); showExportMenu = false },
                 )
             }
             if (state.isSearching || state.filterStatus != null || state.filterNegara != null) {

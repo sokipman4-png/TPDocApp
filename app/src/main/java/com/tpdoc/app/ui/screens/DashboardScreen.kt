@@ -1,5 +1,7 @@
 package com.tpdoc.app.ui.screens
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import android.graphics.Color
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -19,13 +21,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Business
 import androidx.compose.material.icons.filled.PictureAsPdf
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -40,7 +42,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -52,11 +53,11 @@ import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
-import com.tpdoc.app.data.room.Perusahaan
 import com.tpdoc.app.ui.viewmodel.DashboardViewModel
 import com.tpdoc.app.ui.viewmodel.ExportViewModel
 import com.tpdoc.app.ui.viewmodel.StatusKepatuhan
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(
     onBack: (() -> Unit)? = null,
@@ -66,6 +67,9 @@ fun DashboardScreen(
 ) {
     val state by vm.uiState.collectAsState()
     val exportState by exportVm.uiState.collectAsState()
+    val exportPdfLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.CreateDocument("application/pdf"),
+    ) { uri -> uri?.let { exportVm.exportPdfTo(it) } }
 
     Scaffold(
         topBar = {
@@ -84,7 +88,7 @@ fun DashboardScreen(
                             Icon(Icons.Default.Settings, contentDescription = "Pengaturan")
                         }
                     }
-                    IconButton(onClick = { exportVm.exportPdf() }) {
+                    IconButton(onClick = { exportPdfLauncher.launch("tpdoc_laporan_grup.pdf") }) {
                         Icon(Icons.Default.PictureAsPdf, contentDescription = "Export PDF Grup")
                     }
                     IconButton(onClick = { exportVm.shareCsv() }) {

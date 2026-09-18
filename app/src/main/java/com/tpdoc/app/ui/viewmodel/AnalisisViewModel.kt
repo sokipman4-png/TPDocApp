@@ -7,10 +7,8 @@ import com.tpdoc.app.calc.ThresholdCalculator
 import com.tpdoc.app.data.room.Perusahaan
 import com.tpdoc.app.data.room.PerusahaanRepository
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 data class AnalisisUiState(

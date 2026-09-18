@@ -5,11 +5,9 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.tpdoc.app.data.ai.ApiKeyManager
 import com.tpdoc.app.data.ai.ChatMessage
-import com.tpdoc.app.data.ai.ChatResponse
 import com.tpdoc.app.data.ai.OpenRouterClient
 import com.tpdoc.app.data.datastore.SettingsRepository
 import com.tpdoc.app.data.room.AppDatabase
-import com.tpdoc.app.data.room.ModelCache
 import com.tpdoc.app.data.room.ModelCacheDao
 import com.tpdoc.app.data.room.Perusahaan
 import com.tpdoc.app.data.room.PerusahaanRepository

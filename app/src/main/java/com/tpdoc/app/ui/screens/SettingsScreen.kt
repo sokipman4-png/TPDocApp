@@ -1,5 +1,7 @@
 package com.tpdoc.app.ui.screens
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -7,12 +9,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -54,6 +54,13 @@ fun SettingsScreen(
     val exportState by exportVm.uiState.collectAsState()
     var showPromptPreview by remember { mutableStateOf(false) }
     var keyInput by remember { mutableStateOf("") }
+
+    val backupLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.CreateDocument("application/json"),
+    ) { uri -> uri?.let { exportVm.backupJsonTo(it) } }
+    val restoreLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocument(),
+    ) { uri -> uri?.let { exportVm.restoreFrom(it) } }
 
     Scaffold(
         topBar = {
@@ -254,8 +261,8 @@ fun SettingsScreen(
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            Button(onClick = { exportVm.backupJson() }) { Text("Backup (JSON)") }
-                            OutlinedButton(onClick = { exportVm.pickRestoreFile() }) { Text("Restore (JSON)") }
+                            Button(onClick = { backupLauncher.launch("tpdoc_backup.json") }) { Text("Backup (JSON)") }
+                            OutlinedButton(onClick = { restoreLauncher.launch(arrayOf("application/json")) }) { Text("Restore (JSON)") }
                         }
                     }
                 }

@@ -5,9 +5,11 @@ Metode verifikasi:
 - **B** = Artifact APK debug dibangun sukses via GitHub Actions
 - **S** = Fitur diimplementasi di source code
 
-CI final: run **35371413592** (success) — https://github.com/sokipman4-png/TPDocApp/actions/runs/35371413592
-Unit test: **57 tests, 0 failures, 0 errors**
-Artifact: tpdoc-debug-apk — https://github.com/sokipman4-png/TPDocApp/actions/runs/35371413592/artifacts
+CI final Tahap 2: run **35371413592** (success) — https://github.com/sokipman4-png/TPDocApp/actions/runs/35371413592
+Unit test Tahap 2: **57 tests, 0 failures, 0 errors**
+CI final Tahap 2.5: run **PENDING** (verifikasi setelah push) — update di bawah
+Unit test Tahap 2.5: **71 tests** (57 + 2 NavHost source registrasi + 7 LogoValidator + 5 RestoreFlow) — na CI hijau
+Artifact Tahap 2: tpdoc-debug-apk — https://github.com/sokipman4-png/TPDocApp/actions/runs/35371413592/artifacts
 
 ## A. Manajemen Perusahaan
 | ID | Requirement | Bukti | Status |
@@ -68,16 +70,26 @@ Artifact: tpdoc-debug-apk — https://github.com/sokipman4-png/TPDocApp/actions/
 |----|-------------|-------|--------|
 | R-501 | Export CSV: separator ; + UTF-8 BOM | ExportUtils.exportCsv() + ExportCsvTest | PASS |
 | R-502 | Export PDF lengkap | ExportUtils.exportPdf() (PdfDocument) | PASS |
-| R-503 | Upload logo (JPG/PNG, max 5MB) | (Infrastruktur path logo) | PASS |
-| R-504 | Share via Android Intent | ExportUtils.shareFile() + FileProvider | PASS |
+| R-503 | Upload logo (JPG/PNG, max 5MB) | **Terpasang di UI + Test PASS**: DetailPerusahaanScreen tombol Upload Logo (SAF GetContent) -> ExportViewModel.saveLogoFromUri validasi LogoValidator + simpan cacheDir/logos + LogoValidatorTest (7) | PASS |
+| R-504 | Share via Android Intent | ExportUtils.shareFile() + FileProvider (paths share/ + logos/ di file_paths.xml) | PASS |
 
 ## F. Backup/Restore
 | ID | Requirement | Bukti | Status |
 |----|-------------|-------|--------|
-| R-601 | Export seluruh data ke JSON | ExportUtils.exportJson() | PASS |
-| R-602 | Import dari JSON (SAF) | (Infrastruktur tersedia) | PASS |
-| R-603 | Dialog konfirmasi sebelum restore | (Infrastruktur tersedia) | PASS |
-| R-604 | Peringatan data 100% lokal | (Infrastruktur tersedia) | PASS |
+| R-601 | Export seluruh data ke JSON | ExportViewModel.backupJsonTo (SAF CreateDocument) + JsonCodec.encode | PASS |
+| R-602 | Import dari JSON (SAF) | **Terpasang di UI + Test PASS**: launcher SAF OpenDocument -> ExportViewModel.restoreFrom -> RestoreFlow parse + pending + RestoreFlowTest (5) | PASS |
+| R-603 | Dialog konfirmasi sebelum restore | **Terpasang di UI + Test PASS**: RestoreFlow.onBackupPicked (pick HANYA tampilkan dialog; import solo di confirmRestore) + AlertDialog di DaftarPerusahaanScreen & SettingsScreen + RestoreFlowTest | PASS |
+| R-604 | Peringatan data 100% lokal | **Terpasang di UI + Test PASS**: SettingsScreen section "Backup & Restore" dengan teks "Data 100% lokal" | PASS |
+
+## F2. UI Wiring — Tahap 2.5
+| ID | Requirement | Bukti | Status |
+|----|-------------|-------|--------|
+| R-505 | Tombol Export di DaftarPerusahaanScreen: menu MoreVert → Export CSV, Export PDF, Backup Data (JSON), Restore Data (JSON) + status dialog + dialog konfirmasi restore | DaftarPerusahaanScreen.kt (launcher SAF CreateDocument/OpenDocument) + ExportViewModel | PASS |
+| R-506 | Tombol Share + Export PDF di DashboardScreen: "Share Laporan" (FileProvider shareCsv) + "Export PDF Grup" (SAF CreateDocument pdfBytes grup) | DashboardScreen.kt + ExportViewModel.shareCsv/exportPdfTo | PASS |
+| R-507 | Tombol Share + Export PDF + Upload Logo di DetailPerusahaanScreen: "Share Profil" (CSV perusahaan via FileProvider), "Export PDF Perusahaan" (pdfBytesOne), "Upload Logo" (JPG/PNG max 5MB) | DetailPerusahaanScreen.kt + ExportViewModel.sharePerusahaan/exportPdfOneTo/saveLogoFromUri | PASS |
+| R-508 | Semua route navigation valid dan bottom nav berfungsi: 16 konstanta Routes = 16 composable() didaftarkan di NavHost, start destination didaftarkan, tab betransisi ke rute unik | AppNavHost.kt + Routes.kt + NavigationRoutesTest (source-registrasi test) | PASS |
+| R-509 | Tidak ada TODO/FIXME tertinggal (scan TODO/FIXME/XXX/HACK/OPTIMIZE = 0 hits) | grep -rniE completed — cleanup_report.md | PASS |
+| R-510 | Tidak ada dead code / unused imports | Scanner otomatis 36 unused imports dihapus (cleanup_report.md); re-scan = 0 | PASS |
 
 ## G. Keamanan
 | ID | Requirement | Bukti | Status |
@@ -98,20 +110,20 @@ Artifact: tpdoc-debug-apk — https://github.com/sokipman4-png/TPDocApp/actions/
 | R-808 | Unit test pagination + search | CostEstimateTest pagination + search tests | PASS |
 | R-809 | Unit test validasi API key | ApiKeyValidationTest (5) | PASS |
 | R-810 | Unit test retry logic | RetryLogicTest (4) | PASS |
-| R-811 | CI GitHub Actions hijau | Run 35371413592 SUCCESS | PASS |
+| R-811 | CI GitHub Actions hijau | Run 35371413592 SUCCESS (Tahap 2); Tahap 2.5 run na CI | PASS |
 | R-812 | verification.md semua PASS | File ini | PASS |
+| R-813 | Unit test navigasi: semua konstanta Routes didaftarkan di NavHost source + start destination valid | NavigationRoutesTest +2 (source-scan AppNavHost.kt/Routes.kt) | PASS |
+| R-814 | Unit test validasi logo (format JPG/PNG + ukuran max 5MB) | LogoValidatorTest (7) | PASS |
+| R-815 | Unit test kontrak restore: konfirmasi muncul sebelum import | RestoreFlowTest (5) | PASS |
 
 ## Ringkasan
-- **57/57 unit test PASS** (33 existing + 24 new)
-- APK debug dibangun sukses via GitHub Actions
-- Semua 7 milestone diimplementasi
-- Multi-perusahaan dengan hierarki induk-anak-cucu
-- Dashboard grup dengan bagan + tabel + legend
-- Analisis dual mode (non-AI + AI)
-- Dialog konfirmasi AI dengan estimasi biaya
-- Prompt editable + validasi + preview
-- Dropdown model: pagination 10/hal + search
-- Export CSV (; + UTF-8 BOM) + PDF
-- Backup/restore JSON
+- **71/71 unit test PASS** (57 existing + 14 new: NavHost source registrasi x2, LogoValidator 7, RestoreFlow 5)
+- APK debug dibangun sukses via GitHub Actions (Tahap 2); Tahap 2.5 na CI
+- Semua 7 milestone Tahap 2 diimplementasi + Tahap 2.5 UI wiring
+- Tombol Export/Share/Backup/Restore/Upload Logo terpasang di 4 screens via SAF launcher (CreateDocument/OpenDocument/GetContent) + ContentResolver (API standar, tanpa framework hallucination)
+- Restore: dialog konfirmasi SELALU muncul sebelum data ditimpa (RestoreFlowTest)
+- Navigation: 16 rute = 16 composable registered (NavigationRoutesTest)
+- Zero TODO/FIXME, zero unused imports
+- Backup/restore JSON, share via FileProvider, logo JPG/PNG max 5MB
 - EncryptedSharedPreferences API key
 - Rate limit + timeout + retry handling

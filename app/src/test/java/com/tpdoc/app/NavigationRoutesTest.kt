@@ -1,6 +1,7 @@
 package com.tpdoc.app
 
 import com.tpdoc.app.navigation.Routes
+import java.io.File
 import org.junit.Assert.*
 import org.junit.Test
 
@@ -60,6 +61,64 @@ class NavigationRoutesTest {
         assertTrue(Routes.isTab(Routes.HOME))
         assertFalse(Routes.isTab(Routes.DASHBOARD))
         assertFalse(Routes.isTab("detail_perusahaan/1"))
+    }
+
+    @Test
+    fun `setiap konstanta rute didaftarkan persis satu kali di NavHost source`() {
+        val registered = buildSet {
+            Regex("composable\\s*\\(\\s*(?:route\\s*=\\s*)?Routes\\.([A-Z_]+)")
+                .findAll(navHostSource())
+                .forEach { m -> add(m.groupValues[1]) }
+        }.toSortedSet()
+
+        val defined = buildSet {
+            Regex("const\\s+val\\s+([A-Z_]+)\\s*=")
+                .findAll(routesSource())
+                .forEach { m -> add(m.groupValues[1]) }
+        }.toSortedSet()
+
+        // AppNavHost wajib registreri TUTTI konstanta rute Routes, dan tidak ada registrasi asing.
+        assertEquals(
+            "Semua konstanta Routes wajib didaftarkan di NavHost (regresi navigasi)",
+            defined,
+            registered,
+        )
+    }
+
+    @Test
+    fun `start destination adalah rute statis yang didaftarkan`() {
+        val navHost = navHostSource()
+        assertTrue(
+            "Start destination wajib didaftarkan lewat composable()",
+            Regex("composable\\s*\\(\\s*(?:route\\s*=\\s*)?Routes\\.(?:DAFTAR_PERUSAHAAN)").containsMatch(navHost),
+        )
+    }
+
+    private fun navHostSource(): String {
+        val file = sourceFile(
+            listOf(
+                "src/main/java/com/tpdoc/app/navigation/AppNavHost.kt",
+                "app/src/main/java/com/tpdoc/app/navigation/AppNavHost.kt",
+            ),
+        )
+        return file.readText()
+    }
+
+    private fun routesSource(): String {
+        val file = sourceFile(
+            listOf(
+                "src/main/java/com/tpdoc/app/navigation/Routes.kt",
+                "app/src/main/java/com/tpdoc/app/navigation/Routes.kt",
+            ),
+        )
+        return file.readText()
+    }
+
+    private fun sourceFile(candidates: List<String>): File {
+        val found = candidates.mapNotNull { File(it) }.firstOrNull { it.exists() }
+        if (found != null) return found
+        fail("File source tidak ditemukan: $candidates")
+        throw IllegalStateException("unreachable")
     }
 
     private fun isPatternMatch(pattern: String, route: String): Boolean {

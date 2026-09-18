@@ -36,3 +36,32 @@ Keputusan otonom yang diambil selama implementasi Tahap 2.
 15. **minSdk tetap 24**, target 34, JDK 17.
 
 16. **GitHub Actions build**: unit test + assembleDebug, upload artifact APK.
+## Tahap 2.5 (2026-09-19) — Beslissingen extra
+
+17. **Bouw-verificatie lokale onmogelijk**: geen Android SDK in Termux — de loop is altijd:
+    code fix → push → GitHub Actions (testDebugUnitTest + assembleDebug) → lees fout → fix.
+    Voor deze tahap zijn compile-fouten uit de vorige CI-run (35377072588) als ground truth gebruikt.
+
+18. **SAF-contracten horen in screens, niet in ViewModel** (standaard androidx.activity architectuur):
+    `rememberLauncherForActivityResult(CreateDocument/OpenDocument/GetContent)` in de composable;
+    ViewModel ontvangt `android.net.Uri` en doet IO via `ContentResolver.openOutputStream/
+    openInputStream/getType`. Dit vervangt de eerder gehallucineerde API zonder externe source te downloaden.
+
+19. **`lifecycle-runtime-compose` NIET toegevoegd** aan build.gradle.kts — niets gebruikt
+    `collectAsStateWithLifecycle`; de rest van de geëiste activity/navigation/viewmodel deps stonden al
+    in (activity-compose 1.9.0, navigation-compose 2.7.7, viewmodel-compose 2.8.1 — versies naar boven
+    bijgesteld t.o.v. de taaklijst, sesuai "sesuaikan dengan yang sudah ada").
+
+20. **MoreVert-import in DaftarPerusahaanScreen is GEEN dead import** — het is het icon van het
+    Export/Backup/Restore menu (claim in de taak was verouderd).
+
+21. **Restore-flow**: memilih bestand zet alleen `showRestoreConfirm` + `pendingRestore` (pure
+    `RestoreFlow`); import (replaceAll) kan uitsluitend via `confirmRestore()` die bij lege pending
+    no-op is — zo staat de konfirmatie gegarandeerd vóór data-overschrijving. Getest door RestoreFlowTest.
+
+22. **FileProvider**: `file_paths.xml` kreeg `cache-path share + logos` naast bestaande exports/backups
+    (anders gooit `getUriForFile` "Failed to find configured root" bij Share/Logo).
+
+23. **Unused-import scan**: automatische scanner (regex op import + woordgebruik, `by`-delegates
+    uitgezonderd); 36 imports verwijderd, re-scan 0. TODO-scan met `\b`-word boundary: 0 hits
+    (zonder boundary valse treffers door `toDouble*`).

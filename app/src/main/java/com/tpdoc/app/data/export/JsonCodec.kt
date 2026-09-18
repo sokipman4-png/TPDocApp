@@ -59,8 +59,8 @@ object JsonCodec {
 
     private sealed class JsonValue
     private data class MapValue(val entries: List<Pair<String, JsonValue>>) : JsonValue() {
-        fun longOr(key: String, def: Long): Long = entries.find { it.first == key }?.second?.let { (it as? NumValue)?.value.toLong() ?: def } ?: def
-        fun intOr(key: String, def: Int): Int = entries.find { it.first == key }?.second?.let { (it as? NumValue)?.value.toInt() ?: def } ?: def
+        fun longOr(key: String, def: Long): Long = entries.find { it.first == key }?.second?.let { (it as? NumValue)?.value?.toLong() ?: def } ?: def
+        fun intOr(key: String, def: Int): Int = entries.find { it.first == key }?.second?.let { (it as? NumValue)?.value?.toInt() ?: def } ?: def
         fun stringOr(key: String, def: String): String = entries.find { it.first == key }?.second?.let { if (it is StrValue) (it as StrValue).value else def } ?: def
         fun nullableLong(key: String): Long? = entries.find { it.first == key }?.second?.let {
             when (it) {

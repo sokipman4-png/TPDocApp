@@ -1,5 +1,7 @@
 package com.tpdoc.app.ui.screens
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,7 +38,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,7 +45,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -70,6 +70,13 @@ fun DetailPerusahaanScreen(
         repo.anakByParent(p.id)
     }?.collectAsState(initial = emptyList()) ?: remember { mutableStateOf(emptyList()) }
 
+    val exportPdfLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.CreateDocument("application/pdf"),
+    ) { uri -> uri?.let { u -> perusahaan?.let { p -> exportVm.exportPdfOneTo(u, p) } } }
+    val logoLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.GetContent(),
+    ) { uri -> uri?.let { exportVm.saveLogoFromUri(perusahaanId, it) } }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -85,13 +92,13 @@ fun DetailPerusahaanScreen(
                             Icon(Icons.Default.Analytics, contentDescription = "Analisis")
                         }
                     }
-                    IconButton(onClick = { exportVm.pickLogo(perusahaanId) }) {
+                    IconButton(onClick = { logoLauncher.launch("image/*") }) {
                         Icon(Icons.Default.AddAPhoto, contentDescription = "Upload Logo")
                     }
-                    IconButton(onClick = { exportVm.exportPdfOne(perusahaan) }) {
+                    IconButton(onClick = { if (perusahaan != null) exportPdfLauncher.launch("tpdoc_perusahaan_${perusahaanId}.pdf") }) {
                         Icon(Icons.Default.PictureAsPdf, contentDescription = "Export PDF Perusahaan")
                     }
-                    IconButton(onClick = { exportVm.sharePerusahaan(perusahaan) }) {
+                    IconButton(onClick = { perusahaan?.let { exportVm.sharePerusahaan(it) } }) {
                         Icon(Icons.Default.Share, contentDescription = "Share Profil")
                     }
                     IconButton(onClick = { onEdit(perusahaanId) }) {
