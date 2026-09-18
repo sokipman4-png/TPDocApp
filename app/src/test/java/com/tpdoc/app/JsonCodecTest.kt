@@ -45,7 +45,8 @@ class JsonCodecTest {
     fun `json string escaping`() {
         val s = "PT \"Besar\" \\ & Otemba"
         val encoded = JsonCodec.jsonString(s)
-        val decoded = JsonCodec.decode("[$encoded]")[0]
+        // decode verwacht array van objecten; embed de ge-escape string als waarde van "nama"
+        val decoded = JsonCodec.decode("""[{"nama": $encoded}]""")[0]
         assertEquals(s, decoded.nama)
     }
 

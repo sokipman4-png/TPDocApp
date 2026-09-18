@@ -89,6 +89,7 @@ menu ⋮ (Export/Backup/Restore). Niet verwijderd.
 | app/src/test/java/com/tpdoc/app/NavigationRoutesTest.kt | +2 tests (source registratie NavHost ↔ Routes, start destination) |
 | app/src/test/java/com/tpdoc/app/LogoValidatorTest.kt | nieuw (7 tests) |
 | app/src/test/java/com/tpdoc/app/RestoreFlowTest.kt | nieuw (5 tests) |
+| app/src/test/java/com/tpdoc/app/JsonCodecTest.kt | test fix: `json string escaping` stuurde een string naar decode() die alleen `[{...}]`-objecten accepteert → nu ingebed als `"nama"`-waarde (test was al gebroken in commit 572aaa5 maar compileerde nooit) |
 | verification_v2.md, cleanup_report.md, pending_items.md, blockage.md, asumsi_v2.md | documentatie |
 | 9 bestanden overig | alleen import-verwijdering (zie tabel hierboven) |
 
