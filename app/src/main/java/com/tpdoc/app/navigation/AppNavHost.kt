@@ -26,6 +26,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.tpdoc.app.ui.screens.BerelasiScreen
 import com.tpdoc.app.ui.screens.DaftarPerusahaanScreen
+import com.tpdoc.app.ui.screens.DashboardScreen
 import com.tpdoc.app.ui.screens.DetailPerusahaanScreen
 import com.tpdoc.app.ui.screens.DokumenScreen
 import com.tpdoc.app.ui.screens.FormPerusahaanScreen
