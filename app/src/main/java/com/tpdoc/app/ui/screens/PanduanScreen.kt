@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -68,7 +69,7 @@ fun PanduanScreen(onBack: () -> Unit) {
             ) {
                 Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        Icon(Icons.Default.Help, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                        Icon(Icons.Default.Info, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
                         Text(faq.pertanyaan, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
                     }
                     Text(faq.jawaban, style = MaterialTheme.typography.bodyMedium)

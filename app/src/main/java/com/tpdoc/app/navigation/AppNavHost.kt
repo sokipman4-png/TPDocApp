@@ -57,6 +57,7 @@ private val tabs = listOf(
 
 @Composable
 fun TPDocApp(navController: NavHostController = rememberNavController()) {
+    val appContext = LocalContext.current
     val backStack by navController.currentBackStackEntryAsState()
     val currentRoute = backStack?.destination?.route
 
@@ -87,7 +88,7 @@ fun TPDocApp(navController: NavHostController = rememberNavController()) {
     ) { padding ->
         NavHost(
             navController = navController,
-            startDestination = if (AppMeta.isOnboardingDone(LocalContext.current)) {
+            startDestination = if (AppMeta.isOnboardingDone(appContext)) {
                 Routes.DAFTAR_PERUSAHAAN
             } else {
                 Routes.ONBOARDING
@@ -140,7 +141,7 @@ fun TPDocApp(navController: NavHostController = rememberNavController()) {
             composable(Routes.ONBOARDING) {
                 OnboardingScreen(
                     onFinish = {
-                        AppMeta.setOnboardingDone(LocalContext.current)
+                        AppMeta.setOnboardingDone(appContext)
                         navController.navigate(Routes.DAFTAR_PERUSAHAAN) {
                             popUpTo(navController.graph.findStartDestination().id) {
                                 saveState = true

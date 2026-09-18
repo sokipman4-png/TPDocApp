@@ -164,12 +164,10 @@ fun OnboardingScreen(
             // Pagina-indicator (dots)
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 for (i in 0..OnboardingFlow.TOTAL_PAGES - 1) {
-                    val active = i == flow.page
-                    Icon(
-                        if (active) Icons.Default.Star else Icons.Default.Circle,
-                        contentDescription = null,
-                        tint = if (active) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
-                        modifier = Modifier.size(if (active) 14.dp else 10.dp),
+                    Text(
+                        if (i == flow.page) "● " else "○ ",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = if (i == flow.page) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
                     )
                 }
             }

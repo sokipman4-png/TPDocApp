@@ -443,7 +443,7 @@ fun SettingsScreen(
     }
 }
 
-private fun openBrowser(url: String, context: androidx.compose.ui.platform.LocalContext) {
+private fun openBrowser(url: String, context: android.content.Context) {
     try {
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
