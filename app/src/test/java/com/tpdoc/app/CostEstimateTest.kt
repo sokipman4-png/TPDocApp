@@ -23,26 +23,26 @@ class CostEstimateTest {
 
     @Test
     fun `cost calculation usd`() {
-        val inputTokens = 1000
-        val outputTokens = 500
-        val promptPrice = 0.0015 // $1.50 per 1M tokens
-        val completionPrice = 0.0020 // $2.00 per 1M tokens
+        val inputTokens = 1_000_000
+        val outputTokens = 500_000
+        val promptPrice = 1.5  // $1.50 per 1M tokens  
+        val completionPrice = 2.0  // $2.00 per 1M tokens
 
         val inputUsd = inputTokens / 1_000_000.0 * promptPrice
         val outputUsd = outputTokens / 1_000_000.0 * completionPrice
         val totalUsd = inputUsd + outputUsd
 
-        assertEquals(0.0015, inputUsd, 0.0001)
-        assertEquals(0.0010, outputUsd, 0.0001)
-        assertEquals(0.0025, totalUsd, 0.0001)
+        assertEquals(1.5, inputUsd, 0.001)
+        assertEquals(1.0, outputUsd, 0.001)
+        assertEquals(2.5, totalUsd, 0.001)
     }
 
     @Test
     fun `cost conversion to idr`() {
-        val totalUsd = 0.0025
+        val totalUsd = 2.5
         val rate = 16000f
         val totalIdr = (totalUsd * rate).toLong()
-        assertEquals(40, totalIdr)
+        assertEquals(40000, totalIdr)
     }
 
     @Test
