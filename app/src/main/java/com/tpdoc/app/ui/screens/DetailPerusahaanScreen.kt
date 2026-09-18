@@ -26,6 +26,7 @@ import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.PictureAsPdf
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -45,11 +46,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.tpdoc.app.data.room.Perusahaan
 import com.tpdoc.app.data.room.PerusahaanRepository
+import com.tpdoc.app.ui.components.HelpButton
 import com.tpdoc.app.ui.viewmodel.ExportViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -66,6 +69,7 @@ fun DetailPerusahaanScreen(
 ) {
     val perusahaan by repo.byId(perusahaanId).collectAsState(initial = null)
     val exportState by exportVm.uiState.collectAsState()
+    val activityContext = LocalContext.current
     val anakList by perusahaan?.let { p ->
         repo.anakByParent(p.id)
     }?.collectAsState(initial = emptyList()) ?: remember { mutableStateOf(emptyList()) }
@@ -92,13 +96,19 @@ fun DetailPerusahaanScreen(
                             Icon(Icons.Default.Analytics, contentDescription = "Analisis")
                         }
                     }
+                    HelpButton(
+                        "Detail perusahaan: info profil, hierarki induk-anak-cucu, dan tindakan " +
+                            "lokal (upload logo, export PDF, share profil, edit). Tombol Analisis TP Doc " +
+                            "buika analisis threshold + AI untuk perusahaan ini.",
+                        contentDescription = "Panduan detail",
+                    )
                     IconButton(onClick = { logoLauncher.launch("image/*") }) {
                         Icon(Icons.Default.AddAPhoto, contentDescription = "Upload Logo")
                     }
                     IconButton(onClick = { if (perusahaan != null) exportPdfLauncher.launch("tpdoc_perusahaan_${perusahaanId}.pdf") }) {
                         Icon(Icons.Default.PictureAsPdf, contentDescription = "Export PDF Perusahaan")
                     }
-                    IconButton(onClick = { perusahaan?.let { exportVm.sharePerusahaan(it) } }) {
+                    IconButton(onClick = { perusahaan?.let { exportVm.sharePerusahaan(it, activityContext) } }) {
                         Icon(Icons.Default.Share, contentDescription = "Share Profil")
                     }
                     IconButton(onClick = { onEdit(perusahaanId) }) {
@@ -112,6 +122,20 @@ fun DetailPerusahaanScreen(
             modifier = Modifier.fillMaxSize().padding(padding).padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
+            // BUG 3 fix: tombol "Analisis TP Doc" met label (niet alleen icoon)
+            if (onAnalisis != null) {
+                item {
+                    Button(
+                        onClick = { onAnalisis(perusahaanId) },
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Icon(Icons.Default.Analytics, contentDescription = null)
+                        Spacer(Modifier.width(8.dp))
+                        Text("Analisis TP Doc")
+                    }
+                }
+            }
+
             perusahaan?.let { p ->
                 // Info card
                 item {

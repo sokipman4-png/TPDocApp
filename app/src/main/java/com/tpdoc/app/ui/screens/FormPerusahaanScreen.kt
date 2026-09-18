@@ -34,6 +34,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.tpdoc.app.data.room.Perusahaan
+import com.tpdoc.app.ui.components.HelpButton
 import com.tpdoc.app.ui.viewmodel.FormPerusahaanViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -66,6 +67,14 @@ fun FormPerusahaanScreen(
                     Icon(Icons.Default.ArrowBack, contentDescription = "Kembali")
                 }
             },
+            actions = {
+                HelpButton(
+                    "Form perusahaan: field dengan * wajib. Validasi dilakukan sebelyan simpan — " +
+                        "error tampil in-line di bawah field. NPWP opsional; jika diisi, format " +
+                        "sifra + pemisah . atau -. Tahun pajak wajib antara 2000–2100.",
+                    contentDescription = "Panduan form",
+                )
+            },
         )
 
         Column(
@@ -81,24 +90,31 @@ fun FormPerusahaanScreen(
                 label = { Text("Nama PT *") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
-                isError = state.error != null && state.nama.isBlank(),
+                isError = state.fieldErrors["nama"] != null,
             )
+            state.fieldErrors["nama"]?.let {
+                Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+            }
 
             // NPWP
             OutlinedTextField(
                 value = state.npwp,
                 onValueChange = { vm.updateNpwp(it) },
-                label = { Text("NPWP") },
+                label = { Text("NPWP (opsional)") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                isError = state.fieldErrors["npwp"] != null,
             )
+            state.fieldErrors["npwp"]?.let {
+                Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+            }
 
             // Alamat
             OutlinedTextField(
                 value = state.alamat,
                 onValueChange = { vm.updateAlamat(it) },
-                label = { Text("Alamat") },
+                label = { Text("Alamat (opsional)") },
                 modifier = Modifier.fillMaxWidth(),
                 maxLines = 3,
             )
@@ -107,7 +123,7 @@ fun FormPerusahaanScreen(
             OutlinedTextField(
                 value = state.negara,
                 onValueChange = { vm.updateNegara(it) },
-                label = { Text("Negara") },
+                label = { Text("Negara (opsional)") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
             )
@@ -118,6 +134,9 @@ fun FormPerusahaanScreen(
                 onSelect = { vm.updateStatus(it) },
                 modifier = Modifier.fillMaxWidth(),
             )
+            state.fieldErrors["status"]?.let {
+                Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+            }
 
             // Parent (induk) dropdown
             if (state.daftarInduk.isNotEmpty() && state.status != Perusahaan.STATUS_INDUK) {
@@ -131,13 +150,17 @@ fun FormPerusahaanScreen(
 
             // Tahun Pajak
             OutlinedTextField(
-                value = state.tahunPajak.toString(),
-                onValueChange = { v -> v.toIntOrNull()?.let { vm.updateTahunPajak(it) } },
-                label = { Text("Tahun Pajak") },
+                value = state.tahunPajakText,
+                onValueChange = { vm.updateTahunPajak(it) },
+                label = { Text("Tahun Pajak *") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                isError = state.fieldErrors["tahunPajak"] != null,
             )
+            state.fieldErrors["tahunPajak"]?.let {
+                Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+            }
 
             // Error
             state.error?.let {
@@ -148,9 +171,10 @@ fun FormPerusahaanScreen(
 
             Button(
                 onClick = { vm.save() },
+                enabled = !state.loading,
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text(if (state.isEdit) "Simpan Perubahan" else "Simpan Perusahaan")
+                Text(if (state.loading) "Simpan..." else if (state.isEdit) "Simpan Perubahan" else "Simpan Perusahaan")
             }
         }
     }

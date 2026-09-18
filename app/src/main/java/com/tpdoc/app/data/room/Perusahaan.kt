@@ -27,12 +27,16 @@ data class Perusahaan(
     val parentId: Long? = null,
     val tahunPajak: Int = 2024,
     val logoPath: String? = null,
+    val isDummy: Boolean = false,
 ) {
     companion object {
         const val STATUS_INDUK = "induk"
         const val STATUS_ANAK = "anak"
         const val STATUS_CUCU = "cucu"
         const val STATUS_CABANG = "cabang"
+
+        /** Nilai NPWP placeholder als het veld leeg werd gelaten (optioneel veld). */
+        const val EMPTY_NPWP = "-"
 
         val STATUSES = listOf(STATUS_INDUK, STATUS_ANAK, STATUS_CUCU, STATUS_CABANG)
     }

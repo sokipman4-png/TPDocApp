@@ -22,6 +22,7 @@ import kotlinx.coroutines.launch
 data class AIAnalisisUiState(
     val perusahaan: Perusahaan? = null,
     val dataJson: String = "",
+    val apiKeySet: Boolean = false,
     val components: List<AnalisisComponent> = listOf(
         AnalisisComponent("profil", "Profil perusahaan dan status kewajiban TP Doc"),
         AnalisisComponent("kewajaran", "Kewajaran transaksi afiliasi"),
@@ -51,7 +52,9 @@ class AIAnalisisViewModel(application: Application) : AndroidViewModel(applicati
         ApiKeyManager.init(application)
     }
 
-    private val _uiState = MutableStateFlow(AIAnalisisUiState())
+    private val _uiState = MutableStateFlow(AIAnalisisUiState(
+        apiKeySet = ApiKeyManager.hasApiKey(),
+    ))
     val uiState: StateFlow<AIAnalisisUiState> = _uiState.asStateFlow()
 
     fun loadPerusahaan(id: Long) {

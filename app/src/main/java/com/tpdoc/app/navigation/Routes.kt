@@ -19,6 +19,8 @@ object Routes {
     const val DASHBOARD = "dashboard"
     const val SETTINGS = "settings"
     const val ANALISIS = "analisis/{perusahaanId}"
+    const val ONBOARDING = "onboarding"
+    const val PANDUAN = "panduan"
 
     fun analisis(perusahaanId: Long): String = "analisis/$perusahaanId"
 
@@ -35,6 +37,7 @@ object Routes {
     val STATICS = listOf(
         HOME, KRITERIA, KALKULATOR, BERELASI, TRANSAKSI, DOKUMEN, SANKSI,
         KESIMPULAN, NOTIFIKASI, CARI, DAFTAR_PERUSAHAAN, DASHBOARD, SETTINGS,
+        ONBOARDING, PANDUAN,
     )
 
     /** Semua pattern rute (potentially dengan {arg}) — untuk validasi unik. */

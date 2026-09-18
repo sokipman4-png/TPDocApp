@@ -21,6 +21,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.tpdoc.app.calc.ThresholdCalculator
+import com.tpdoc.app.ui.components.HelpButton
 import com.tpdoc.app.ui.components.ScreenScaffold
 import com.tpdoc.app.ui.components.SectionHeader
 import com.tpdoc.app.ui.components.StatusCard
@@ -31,11 +32,33 @@ import com.tpdoc.app.ui.viewmodel.KalkulatorViewModel
 fun KalkulatorScreen(onBack: () -> Unit) {
     val vm: KalkulatorViewModel = viewModel()
 
-    ScreenScaffold(title = "Kalkulator Threshold", onBack = onBack) {
+    ScreenScaffold(
+        title = "Kalkulator Threshold",
+        onBack = onBack,
+        actions = {
+            HelpButton(
+                "Deze calculator toont of Master File, Local File en CbCR formeel verplicht zijn. " +
+                    "Voer de totale groepsomzet en het totaal van gelieerde transacties in; het resultaat " +
+                    "wordt direct bijgewerkt.",
+                contentDescription = "Panduan kalkulator",
+            )
+        },
+    ) {
         Text(
             "Cek kewajiban dokumen TP Doc berdasarkan omzet konsolidasi grup dan nilai transaksi afiliasi.",
             style = MaterialTheme.typography.bodyMedium,
         )
+
+        // Tooltip veld 1 (STEP 5.D)
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+            Text("Omzet Konsolidasi Grup (Rp)", style = MaterialTheme.typography.labelLarge)
+            HelpButton(
+                "Totale omzet van de gehele concern (moeder + dochters, wereldwijd geconsolideerd), " +
+                    "in Indonesische roepia. Dit bepaalt of Master File/Local File verplicht zijn " +
+                    "(> Rp50 M) en of CbCR geldt (> Rp11 T).",
+                contentDescription = "Uitleg omzet",
+            )
+        }
 
         OutlinedTextField(
             value = vm.inputOmzet,
@@ -50,6 +73,17 @@ fun KalkulatorScreen(onBack: () -> Unit) {
             "Terbaca: ${KalkulatorViewModel.formatRupiah(vm.omzet)}",
             style = MaterialTheme.typography.labelMedium,
         )
+
+        // Tooltip veld 2 (STEP 5.D)
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+            Text("Total Transaksi Afiliasi (Rp)", style = MaterialTheme.typography.labelLarge)
+            HelpButton(
+                "Totale waarde van ALLE transacties tussen gelieerde partijen binnen de concern " +
+                    "(goederen, diensten, leningen, royalti, huur). Samen met de omzet geldt: " +
+                    "Master File/Local File bij omzet > Rp50 M EN transacties > Rp20 M.",
+                contentDescription = "Uitleg transaksi",
+            )
+        }
 
         OutlinedTextField(
             value = vm.inputTransaksi,

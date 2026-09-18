@@ -1,5 +1,7 @@
 package com.tpdoc.app.ui.screens
 
+import android.content.Intent
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -30,16 +32,21 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.tpdoc.app.data.content.PanduanContent
+import com.tpdoc.app.ui.components.HelpButton
+import com.tpdoc.app.ui.viewmodel.DummyDataViewModel
 import com.tpdoc.app.ui.viewmodel.ExportViewModel
 import com.tpdoc.app.ui.viewmodel.SettingsViewModel
 
@@ -47,13 +54,22 @@ import com.tpdoc.app.ui.viewmodel.SettingsViewModel
 @Composable
 fun SettingsScreen(
     onBack: () -> Unit,
+    onOpenPanduan: (() -> Unit)? = null,
+    onOpenTutorial: (() -> Unit)? = null,
     vm: SettingsViewModel = viewModel(),
     exportVm: ExportViewModel = viewModel(),
+    dummyVm: DummyDataViewModel = viewModel(),
 ) {
     val state by vm.uiState.collectAsState()
     val exportState by exportVm.uiState.collectAsState()
+    val dummyState by dummyVm.uiState.collectAsState()
+    val activityContext = LocalContext.current
     var showPromptPreview by remember { mutableStateOf(false) }
     var keyInput by remember { mutableStateOf("") }
+
+    LaunchedEffect(Unit) {
+        dummyVm.refreshHasDummy()
+    }
 
     val backupLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.CreateDocument("application/json"),
@@ -70,6 +86,14 @@ fun SettingsScreen(
                     IconButton(onClick = onBack) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Kembali")
                     }
+                },
+                actions = {
+                    HelpButton(
+                        "Pengaturan: API key OpenRouter (vereist voor AI-analyse), modelselectie, " +
+                            "wisselkoers USD→IDR, prompt-template, data-contoevoorbeeld, tutorial/panduan " +
+                            "en backup/restore. Alle data blijft lokaal.",
+                        contentDescription = "Panduan pengaturan",
+                    )
                 },
             )
         },
@@ -119,6 +143,14 @@ fun SettingsScreen(
                         }
                         state.testResult?.let {
                             Text(it, style = MaterialTheme.typography.bodySmall, color = if (it.startsWith("S")) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error)
+                        }
+                        // Banner: waar een API key te halen (STEP 5.C)
+                        TextButton(onClick = { openBrowser(PanduanContent.URL_OPENROUTER_KEYS, activityContext) }) {
+                            Text(
+                                "Butuh API key dari openrouter.ai — klik di sini untuk daftar",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.primary,
+                            )
                         }
                     }
                 }
@@ -250,6 +282,57 @@ fun SettingsScreen(
                 }
             }
 
+            // Section: Data Contoh (STEP 4)
+            item {
+                SectionTitle("Data Contoh (Dummy)")
+                Card(modifier = Modifier.fillMaxWidth()) {
+                    Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Text(
+                            "Muat 3 perusahaan contoh in een hiërarchie (induk-anak-cucu) met 2 belastingjaren " +
+                                "(2024, 2025). Data real user wordt niet overschreven en blijft in een aparte vlag.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Button(
+                                onClick = { dummyVm.askGenerate() },
+                                enabled = !dummyState.busy,
+                            ) {
+                                Text(if (dummyState.busy) "Memuat..." else "Muat Data Contoh (Dummy)")
+                            }
+                            if (dummyState.hasDummy) {
+                                OutlinedButton(onClick = { dummyVm.askDeleteDummy() }) {
+                                    Text("Hapus Data Contoh", color = MaterialTheme.colorScheme.error)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Section: Tutorial & Panduan (STEP 5)
+            item {
+                SectionTitle("Tutorial & Panduan")
+                Card(modifier = Modifier.fillMaxWidth()) {
+                    Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Text(
+                            "Nieuw in TP Doc Manager? Bekijk de korte onboarding-tutorial of lees de " +
+                                "volledige gebruikershandleiding met FAQ.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            if (onOpenTutorial != null) {
+                                Button(onClick = onOpenTutorial) { Text("Lihat Tutorial") }
+                            }
+                            if (onOpenPanduan != null) {
+                                OutlinedButton(onClick = onOpenPanduan) { Text("Panduan Penggunaan") }
+                            }
+                        }
+                    }
+                }
+            }
+
             // Section: Backup & Restore
             item {
                 SectionTitle("Backup & Restore")
@@ -319,6 +402,54 @@ fun SettingsScreen(
             confirmButton = { TextButton(onClick = { exportVm.confirmRestore() }) { Text("Lanjut", color = MaterialTheme.colorScheme.error) } },
             dismissButton = { TextButton(onClick = { exportVm.cancelRestore() }) { Text("Batal") } },
         )
+    }
+
+    // Dialog konfirmasi data contoh (STEP 4)
+    if (dummyState.showConfirm) {
+        AlertDialog(
+            onDismissRequest = { dummyVm.cancelGenerate() },
+            title = { Text("Konfirmasi Data Contoh") },
+            text = {
+                Text(
+                    "Data contoh zal worden toegevoegd (3 bedrijven, hiërarchie induk-anak-cucu, " +
+                        "2 belastingjaren). Lanjut? Data existing wordt niet verwijderd.",
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = { dummyVm.generate() }) { Text("Lanjut") }
+            },
+            dismissButton = {
+                TextButton(onClick = { dummyVm.cancelGenerate() }) { Text("Batal") }
+            },
+        )
+    }
+
+    // Status/error data contoh
+    dummyState.snackbar?.let { msg ->
+        AlertDialog(
+            onDismissRequest = { dummyVm.dismiss() },
+            title = { Text("Sukses") },
+            text = { Text(msg) },
+            confirmButton = { TextButton(onClick = { dummyVm.dismiss() }) { Text("OK") } },
+        )
+    }
+    dummyState.error?.let { msg ->
+        AlertDialog(
+            onDismissRequest = { dummyVm.dismiss() },
+            title = { Text("Error") },
+            text = { Text(msg) },
+            confirmButton = { TextButton(onClick = { dummyVm.dismiss() }) { Text("OK") } },
+        )
+    }
+}
+
+private fun openBrowser(url: String, context: androidx.compose.ui.platform.LocalContext) {
+    try {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        context.startActivity(intent)
+    } catch (e: Exception) {
+        // geen browser beschikbaar - stille val, geen crash
     }
 }
 

@@ -15,6 +15,8 @@ class PerusahaanRepository(context: Context) {
 
     suspend fun getById(id: Long): Perusahaan? = dao.getById(id)
 
+    suspend fun findByNpwp(npwp: String, excludeId: Long = 0): Perusahaan? = dao.findByNpwp(npwp, excludeId)
+
     suspend fun getAll(): List<Perusahaan> = dao.getAll()
 
     fun search(query: String): Flow<List<Perusahaan>> = dao.search(query)
@@ -36,6 +38,10 @@ class PerusahaanRepository(context: Context) {
     suspend fun delete(perusahaan: Perusahaan) = dao.delete(perusahaan)
 
     suspend fun deleteById(id: Long) = dao.deleteById(id)
+
+    suspend fun getDummy(): List<Perusahaan> = dao.getDummy()
+
+    suspend fun deleteDummy() = dao.deleteDummy()
 
     /** Ganti seluruh data (untuk restore backup). */
     suspend fun replaceAll(items: List<Perusahaan>) {

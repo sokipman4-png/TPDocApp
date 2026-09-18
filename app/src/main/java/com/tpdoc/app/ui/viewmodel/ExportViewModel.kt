@@ -3,6 +3,7 @@ package com.tpdoc.app.ui.viewmodel
 import android.app.Application
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.tpdoc.app.data.export.CsvCodec
@@ -177,7 +178,7 @@ class ExportViewModel(application: Application) : AndroidViewModel(application) 
 
     // ---- Share ----
 
-    fun shareCsv() {
+    fun shareCsv(activityContext: Context) {
         viewModelScope.launch {
             try {
                 val all = repo.getAll()
@@ -185,22 +186,24 @@ class ExportViewModel(application: Application) : AndroidViewModel(application) 
                 val file = withContext(Dispatchers.IO) {
                     writeCacheFile("share", "tpdoc_perusahaan.csv", bytes)
                 }
-                ExportUtils.shareFile(ctx, file, "text/csv", "Share CSV")
+                ExportUtils.shareFile(activityContext, file, "text/csv", "Share CSV")
             } catch (e: Exception) {
+                Log.e("ExportViewModel", "shareCsv failed", e)
                 notifyError("Gagal share CSV: ${e.message}")
             }
         }
     }
 
-    fun sharePerusahaan(perusahaan: Perusahaan) {
+    fun sharePerusahaan(perusahaan: Perusahaan, activityContext: Context) {
         viewModelScope.launch {
             try {
                 val bytes = withContext(Dispatchers.IO) { CsvCodec.buildCsvBytes(listOf(perusahaan)) }
                 val file = withContext(Dispatchers.IO) {
                     writeCacheFile("share", "tpdoc_${perusahaan.nama.slugify()}.csv", bytes)
                 }
-                ExportUtils.shareFile(ctx, file, "text/csv", "Share Profil ${perusahaan.nama}")
+                ExportUtils.shareFile(activityContext, file, "text/csv", "Share Profil ${perusahaan.nama}")
             } catch (e: Exception) {
+                Log.e("ExportViewModel", "sharePerusahaan failed", e)
                 notifyError("Gagal share perusahaan: ${e.message}")
             }
         }

@@ -117,14 +117,23 @@ Artifact Tahap 2: tpdoc-debug-apk — https://github.com/sokipman4-png/TPDocApp/
 | R-814 | Unit test validasi logo (format JPG/PNG + ukuran max 5MB) | LogoValidatorTest (7) | PASS |
 | R-815 | Unit test kontrak restore: konfirmasi muncul sebelum import | RestoreFlowTest (5) | PASS |
 
+## I. Tahap 2.6 — Bugfix & Fitur Baru (R-815..R-823)
+| ID | Requirement | Bukti | Status |
+|----|-------------|-------|--------|
+| R-815 | Form simpan perusahaan tidak crash (test lengkap + kosong + partial + NPWP duplikat) | **Fix BUG 1**: FormPerusahaanViewModel hardend (validasi FormValidation PURE + try-catch + null-safety + UiState loading/error + fieldErrors inline onder elk veld) + FormValidationTest (13) — fout is gecontroleerd, geen crash | PASS |
+| R-816 | Share Intent punya FLAG_ACTIVITY_NEW_TASK + FLAG_GRANT_READ_URI_PERMISSION | **Fix BUG 2**: ExportUtils.shareFile() gebruikt ShareIntent (0x10000000|0x1) op intent én chooser + context vanuit Composable (LocalContext.current) + ShareIntentTest (5) | PASS |
+| R-817 | Menu Analisis terpasang di DetailPerusahaanScreen | **Fix BUG 3**: tombol met label "Analisis TP Doc" (niet alleen icoon) bovenaan DetailPerusahaanScreen + icoon blijft in top bar; route analisis/{perusahaanId} geregistreerd | PASS |
+| R-818 | Alur lengkap analisis (non-AI + AI) berfungsi | AnalisisScreen: tab-toggle Non-AI/AI (ModeTab) + kosten-dialog + resultaat zij-aan-zij; empty state API key als er geen key is | PASS |
+| R-819 | Tombol Generate Data Dummy (3 perusahaan + hierarki + 2 tahun pajak) | DummyDataFactory (pure) + DummyDataViewModel + knoppen in Pengaturan én lege bedrijvenlijst; isDummy flag (migratie Room v3→v4); logo placeholder BMP; "Hapus Data Contoh" + DummyDataFactoryTest (6) | PASS |
+| R-820 | Onboarding screen (4 slide) verschijnt bij eerste keer open | OnboardingScreen (4 slides + Lewati/Lanjut/Mulai + optie Muat Data Contoh) + AppMeta.onboarding_done flag + conditional startDestination NavHost + OnboardingFlowTest (7) | PASS |
+| R-821 | Halaman Tutorial/Panduan di Pengaturan | PanduanScreen (9 secties + FAQ 8) bereikbaar via Pengaturan → "Panduan Penggunaan"; content in PanduanContent (pure) + PanduanContentTest (8) | PASS |
+| R-822 | Tooltip "?" di screen penting | HelpButton component op: Daftar, Detail, Analisis, Form, Settings, Dashboard, Kalkulator (+ tooltips naast Omzet/Transaksi velden) + banner API-key-link in Settings | PASS |
+| R-823 | Empty state ramah di elke screen | EmptyState component: bedrijvenlijst ("Belum ada perusahaan... Klik + ... of muat data contoh" + knop), Analisis AI-tab ("Isi API key di Pengaturan...") | PASS |
+
 ## Ringkasan
-- **90/90 unit test PASS, 0 failures, 0 errors** (14 suites: LogoValidatorTest 7, RestoreFlowTest 5, NavigationRoutesTest 10, JsonCodecTest 6, e.a.)
-- APK debug dibangun sukses via GitHub Actions (Tahap 2); Tahap 2.5 na CI
-- Semua 7 milestone Tahap 2 diimplementasi + Tahap 2.5 UI wiring
-- Tombol Export/Share/Backup/Restore/Upload Logo terpasang di 4 screens via SAF launcher (CreateDocument/OpenDocument/GetContent) + ContentResolver (API standar, tanpa framework hallucination)
-- Restore: dialog konfirmasi SELALU muncul sebelum data ditimpa (RestoreFlowTest)
-- Navigation: 16 rute = 16 composable registered (NavigationRoutesTest)
-- Zero TODO/FIXME, zero unused imports
-- Backup/restore JSON, share via FileProvider, logo JPG/PNG max 5MB
-- EncryptedSharedPreferences API key
-- Rate limit + timeout + retry handling
+- **Tahap 2.6: 3 bug gerepareerd** (crash bij simpen, FLAG_ACTIVITY_NEW_TASK share, menu Analisis) + **2 functies nieuw** (data dummy, onboarding + tutorial/panduan + tooltips + empty states)
+- Unit test suites nieuw: FormValidationTest (13), DummyDataFactoryTest (6), ShareIntentTest (5), OnboardingFlowTest (7), PanduanContentTest (8) — totaal 90 + 39 = **129 tests**, 0 failures, 0 errors (bevestigd in CI run Tahap 2.6)
+- Navigation: 16 → **18 routes** (onboarding, panduan) — NavigationRoutesTest past zich automatisch aan (source-scan)
+- Pelajaran Tahap 2.6 toegepast: validatie vóór DB-schrijven (FormValidation pure), try-catch overal (Log.e + vriendelijke boodschap), geen `!!`, viewModelScope + Dispatchers.IO, UiState per scherm
+- Room-migratie v3→v4: kolom isDummy (data dummy gescheiden van echte data; "Hapus Data Contoh" verwijdert alleen isDummy=1)
+- Zero TODO/FIXME; Robolectric/device UI-tests niet mogelijk op Termux-CI (zie blockage.md) — vervangen door pure-logic tests

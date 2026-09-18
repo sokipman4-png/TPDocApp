@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
@@ -25,9 +26,14 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -205,5 +211,47 @@ fun BulletList(items: List<String>) {
         items.forEach { item ->
             Text("•  $item", style = MaterialTheme.typography.bodyMedium)
         }
+    }
+}
+
+/**
+ * Ikon "?" voor tooltip/help op elke screen (STEP 5.C Tahap 2.6).
+ * Klik -> AlertDialog met uitleg; handig voor top-app-bar en naast velden.
+ */
+@Composable
+fun HelpButton(text: String, contentDescription: String = "Panduan") {
+    var show by remember { mutableStateOf(false) }
+    IconButton(onClick = { show = true }) {
+        Icon(Icons.Default.Info, contentDescription = contentDescription)
+    }
+    if (show) {
+        AlertDialog(
+            onDismissRequest = { show = false },
+            title = { Text("Panduan") },
+            text = { Text(text, style = MaterialTheme.typography.bodyMedium) },
+            confirmButton = {
+                TextButton(onClick = { show = false }) { Text("OK") }
+            },
+        )
+    }
+}
+
+/** Empty state ramah (STEP 5.E): illustratie-icoon + tekst + optionele actie. */
+@Composable
+fun EmptyState(
+    icon: ImageVector = Icons.Default.Info,
+    titel: String,
+    menering: String,
+    action: (@Composable () -> Unit)? = null,
+) {
+    Column(
+        modifier = Modifier.fillMaxWidth().padding(vertical = 40.dp),
+        horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(56.dp))
+        Text(titel, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
+        Text(menering, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        if (action != null) action()
     }
 }

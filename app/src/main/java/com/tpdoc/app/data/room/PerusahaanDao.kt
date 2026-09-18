@@ -20,6 +20,9 @@ interface PerusahaanDao {
     @Query("SELECT * FROM perusahaan WHERE id = :id")
     suspend fun getById(id: Long): Perusahaan?
 
+    @Query("SELECT * FROM perusahaan WHERE npwp = :npwp AND (:excludeId <= 0 OR id != :excludeId) LIMIT 1")
+    suspend fun findByNpwp(npwp: String, excludeId: Long): Perusahaan?
+
     @Query("SELECT * FROM perusahaan WHERE parentId IS NULL ORDER BY nama")
     fun observeInduk(): Flow<List<Perusahaan>>
 
@@ -64,6 +67,12 @@ interface PerusahaanDao {
 
     @Query("DELETE FROM perusahaan")
     suspend fun deleteAll()
+
+    @Query("SELECT * FROM perusahaan WHERE isDummy = 1")
+    suspend fun getDummy(): List<Perusahaan>
+
+    @Query("DELETE FROM perusahaan WHERE isDummy = 1")
+    suspend fun deleteDummy()
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(items: List<Perusahaan>)

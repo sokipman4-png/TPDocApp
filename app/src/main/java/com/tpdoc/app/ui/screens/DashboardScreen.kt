@@ -47,6 +47,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.tpdoc.app.ui.components.HelpButton
 import com.github.mikephil.charting.charts.HorizontalBarChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
@@ -67,6 +68,7 @@ fun DashboardScreen(
 ) {
     val state by vm.uiState.collectAsState()
     val exportState by exportVm.uiState.collectAsState()
+    val activityContext = androidx.compose.ui.platform.LocalContext.current
     val exportPdfLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.CreateDocument("application/pdf"),
     ) { uri -> uri?.let { exportVm.exportPdfTo(it) } }
@@ -88,10 +90,16 @@ fun DashboardScreen(
                             Icon(Icons.Default.Settings, contentDescription = "Pengaturan")
                         }
                     }
+                    HelpButton(
+                        "Dashboard: samenvatting van de gehele concern met status (hijau/kuning/merah), " +
+                            "omzet, hiërarchie-grafiek en export/share. Productie: klik een bedrijf aan " +
+                            "of open het detailscherm via de bedrijvenlijst.",
+                        contentDescription = "Panduan dashboard",
+                    )
                     IconButton(onClick = { exportPdfLauncher.launch("tpdoc_laporan_grup.pdf") }) {
                         Icon(Icons.Default.PictureAsPdf, contentDescription = "Export PDF Grup")
                     }
-                    IconButton(onClick = { exportVm.shareCsv() }) {
+                    IconButton(onClick = { exportVm.shareCsv(activityContext) }) {
                         Icon(Icons.Default.Share, contentDescription = "Share Laporan")
                     }
                 },

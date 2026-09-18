@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -24,6 +25,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.tpdoc.app.data.AppMeta
 import com.tpdoc.app.ui.screens.AnalisisScreen
 import com.tpdoc.app.ui.screens.BerelasiScreen
 import com.tpdoc.app.ui.screens.DaftarPerusahaanScreen
@@ -36,6 +38,8 @@ import com.tpdoc.app.ui.screens.KalkulatorScreen
 import com.tpdoc.app.ui.screens.KesimpulanScreen
 import com.tpdoc.app.ui.screens.KriteriaScreen
 import com.tpdoc.app.ui.screens.NotifikasiScreen
+import com.tpdoc.app.ui.screens.OnboardingScreen
+import com.tpdoc.app.ui.screens.PanduanScreen
 import com.tpdoc.app.ui.screens.PencarianScreen
 import com.tpdoc.app.ui.screens.SanksiScreen
 import com.tpdoc.app.ui.screens.SettingsScreen
@@ -83,7 +87,11 @@ fun TPDocApp(navController: NavHostController = rememberNavController()) {
     ) { padding ->
         NavHost(
             navController = navController,
-            startDestination = Routes.DAFTAR_PERUSAHAAN,
+            startDestination = if (AppMeta.isOnboardingDone(LocalContext.current)) {
+                Routes.DAFTAR_PERUSAHAAN
+            } else {
+                Routes.ONBOARDING
+            },
             modifier = Modifier.padding(padding),
         ) {
             composable(Routes.HOME) {
@@ -121,7 +129,32 @@ fun TPDocApp(navController: NavHostController = rememberNavController()) {
             }
 
             composable(Routes.SETTINGS) {
-                SettingsScreen(onBack = { navController.popBackStack() })
+                SettingsScreen(
+                    onBack = { navController.popBackStack() },
+                    onOpenPanduan = { navController.navigate(Routes.PANDUAN) },
+                    onOpenTutorial = { navController.navigate(Routes.ONBOARDING) },
+                )
+            }
+
+            // Onboarding eerste keer (STEP 5.A) + herhaalbaar via Pengaturan.
+            composable(Routes.ONBOARDING) {
+                OnboardingScreen(
+                    onFinish = {
+                        AppMeta.setOnboardingDone(LocalContext.current)
+                        navController.navigate(Routes.DAFTAR_PERUSAHAAN) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
+                )
+            }
+
+            // Halaman tutorial/panduan (STEP 5.B).
+            composable(Routes.PANDUAN) {
+                PanduanScreen(onBack = { navController.popBackStack() })
             }
 
             composable(

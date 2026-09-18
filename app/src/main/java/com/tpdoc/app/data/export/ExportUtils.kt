@@ -84,17 +84,31 @@ object ExportUtils {
 
     // ---- Share ----
 
+    /**
+     * Share file via Intent.ACTION_SEND.
+     *
+     * BUG 2 fix (Tahap 2.6): "Calling startActivity() from outside of an Activity
+     * context requires the FLAG_ACTIVITY_NEW_TASK flag.":
+     *  - Intent send bevat FLAG_ACTIVITY_NEW_TASK | FLAG_GRANT_READ_URI_PERMISSION
+     *    (zie ShareIntent, unit-getest).
+     *  - Chooser yang naar startActivity() gaat bevat ook FLAG_ACTIVITY_NEW_TASK.
+     *  - Context: bij voorkeur Activity-context (LocalContext.current van de
+     *    Composable); als fallback wordt de Application-context gebruikt.
+     */
     fun shareFile(context: Context, file: File, mimeType: String, title: String) {
         val uri: Uri = FileProvider.getUriForFile(
             context,
             "${context.packageName}.fileprovider",
             file,
         )
+        val spec = ShareIntent.build(uri.toString(), mimeType, title)
         val intent = Intent(Intent.ACTION_SEND).apply {
-            type = mimeType
+            type = spec.mimeType
             putExtra(Intent.EXTRA_STREAM, uri)
-            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            addFlags(spec.flags)
         }
-        context.startActivity(Intent.createChooser(intent, title))
+        val chooser = Intent.createChooser(intent, spec.title)
+        chooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        context.startActivity(chooser)
     }
 }
