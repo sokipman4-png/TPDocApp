@@ -37,6 +37,7 @@ import com.tpdoc.app.ui.screens.KriteriaScreen
 import com.tpdoc.app.ui.screens.NotifikasiScreen
 import com.tpdoc.app.ui.screens.PencarianScreen
 import com.tpdoc.app.ui.screens.SanksiScreen
+import com.tpdoc.app.ui.screens.SettingsScreen
 import com.tpdoc.app.ui.screens.TransaksiScreen
 
 private data class TabItem(val route: String, val label: String, val icon: ImageVector)
@@ -112,7 +113,14 @@ fun TPDocApp(navController: NavHostController = rememberNavController()) {
             }
 
             composable(Routes.DASHBOARD) {
-                DashboardScreen(onBack = { navController.popBackStack() })
+                DashboardScreen(
+                    onBack = { navController.popBackStack() },
+                    onSettings = { navController.navigate(Routes.SETTINGS) },
+                )
+            }
+
+            composable(Routes.SETTINGS) {
+                SettingsScreen(onBack = { navController.popBackStack() })
             }
 
             composable(
