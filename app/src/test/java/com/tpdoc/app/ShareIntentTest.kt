@@ -29,9 +29,10 @@ class ShareIntentTest {
     fun `share intent flags = beide vereiste flags`() {
         val spec = ShareIntent.build("file:///tmp/tpdoc.csv", "text/csv", "Share CSV")
         assertEquals(
-            ShareIntent.FLAG_ACTIVITY_NEW_TASK | ShareIntent.FLAG_GRANT_READ_URI_PERMISSION,
+            ShareIntent.FLAGS_SEND,
             spec.flags,
         )
+        assertEquals(0x10000001, spec.flags)
     }
 
     @Test

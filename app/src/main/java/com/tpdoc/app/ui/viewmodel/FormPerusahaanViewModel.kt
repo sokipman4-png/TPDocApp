@@ -130,7 +130,7 @@ class FormPerusahaanViewModel(application: Application) : AndroidViewModel(appli
         if (errors.isNotEmpty()) {
             // Terkontrol: tampil error inline, JANGAN crash
             _uiState.value = _uiState.value.copy(
-                fieldErrors = errors.associate { it.field -> it.message },
+                fieldErrors = errors.associate { it.field to it.message },
                 error = "Pastikan form lengkap dan valid.",
                 saved = false,
             )
@@ -152,7 +152,7 @@ class FormPerusahaanViewModel(application: Application) : AndroidViewModel(appli
                         saved = false,
                         error = "NPWP duplikat: data niet opgeslagen.",
                         fieldErrors = mapOf(
-                            FormFieldError.FIELD_NPWP -> "NPWP al gebruikt door ${duplicate.nama}",
+                            FormFieldError.FIELD_NPWP to "NPWP al gebruikt door ${duplicate.nama}",
                         ),
                     )
                     return@launch

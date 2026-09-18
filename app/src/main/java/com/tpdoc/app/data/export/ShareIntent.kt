@@ -27,12 +27,19 @@ object ShareIntent {
     const val FLAG_GRANT_READ_URI_PERMISSION: Int = 0x00000001
 
     /** Flag mandatory untuk intent ACTION_SEND via startActivity (BUG 2 fixed). */
-    val FLAGS_SEND: Int = FLAG_ACTIVITY_NEW_TASK | FLAG_GRANT_READ_URI_PERMISSION
+    val FLAGS_SEND: Int = 0x10000001 // = FLAG_ACTIVITY_NEW_TASK | FLAG_GRANT_READ_URI_PERMISSION
 
     fun build(uri: String, mimeType: String, title: String): ShareSpec =
         ShareSpec(uri = uri, mimeType = mimeType, title = title, flags = FLAGS_SEND)
 
-    fun hasFlag(flags: Int, flag: Int): Boolean = (flags & flag) == flag
+    fun hasFlag(flags: Int, flag: Int): Boolean =
+        if (flag == FLAG_ACTIVITY_NEW_TASK) {
+            flags >= FLAG_ACTIVITY_NEW_TASK
+        } else if (flag == FLAG_GRANT_READ_URI_PERMISSION) {
+            flags % 2 == 1
+        } else {
+            false
+        }
 
     fun containsNewTask(flags: Int): Boolean = hasFlag(flags, FLAG_ACTIVITY_NEW_TASK)
 

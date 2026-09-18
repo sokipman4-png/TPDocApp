@@ -173,13 +173,15 @@ object DummyDataFactory {
         bytes.size >= 54 && bytes[0].toInt() == 0x42 && bytes[1].toInt() == 0x4D
 
     private fun putIntLE(bytes: ByteArray, offset: Int, value: Int) {
-        for (i in 0..3) {
-            bytes[offset + i] = ((value >>> (8 * i)) & 0xFF).toByte()
-        }
+        // Rekenkundig in plaats van bitshift/bitwise (value is altijd niet-negatief hier).
+        bytes[offset] = (value % 256).toByte()
+        bytes[offset + 1] = ((value / 256) % 256).toByte()
+        bytes[offset + 2] = ((value / 65536) % 256).toByte()
+        bytes[offset + 3] = ((value / 16777216) % 256).toByte()
     }
 
     private fun putShortLE(bytes: ByteArray, offset: Int, value: Int) {
-        bytes[offset] = (value & 0xFF).toByte()
-        bytes[offset + 1] = ((value >>> 8) & 0xFF).toByte()
+        bytes[offset] = (value % 256).toByte()
+        bytes[offset + 1] = ((value / 256) % 256).toByte()
     }
 }
