@@ -52,7 +52,7 @@ class OpenRouterClient(private val apiKey: String) {
                 if (code == 429) {
                     Result.failure(RateLimitException("Rate limit tercapai (429). Coba lagi nanti."))
                 } else {
-                    val errorBody = response.bodyAsText()
+                    val errorBody = try { response.body<String>() } catch (e: Exception) { "unknown error" }
                     Result.failure(OpenRouterException("HTTP $code: $errorBody"))
                 }
             }
