@@ -7,12 +7,12 @@ import com.tpdoc.app.data.room.Perusahaan
 import com.tpdoc.app.data.room.PerusahaanRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 data class PerusahaanListUiState(
@@ -49,7 +49,7 @@ class PerusahaanViewModel(application: Application) : AndroidViewModel(applicati
             isSearching = searching,
             availableNegara = negaraList,
         )
-    }.stateIn(viewModelScope, kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5000), PerusahaanListUiState())
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), PerusahaanListUiState())
 
     val listFlow = combine(_searchQuery, _filterStatus, _filterNegara, _isSearching) { query, status, negara, searching ->
         Triple(query, status, negara)
@@ -59,9 +59,9 @@ class PerusahaanViewModel(application: Application) : AndroidViewModel(applicati
             status != null || negara != null -> repo.filter(status, negara)
             else -> repo.semua
         }
-    }.stateIn(viewModelScope, kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5000), emptyList())
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    val indukList = repo.induk.stateIn(viewModelScope, kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5000), emptyList())
+    val indukList = repo.induk.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     fun search(query: String) {
         _searchQuery.value = query

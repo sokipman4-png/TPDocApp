@@ -51,25 +51,29 @@ class FormPerusahaanViewModel(application: Application) : AndroidViewModel(appli
                     daftarInduk = repo.getAll().filter { it.id != p.id && it.status == Perusahaan.STATUS_INDUK },
                 )
             } else {
-                _uiState.value = FormUiState(daftarInduk = repo.getAll().filter { it.status == Perusahaan.STATUS_INDUK })
+                _uiState.value = _uiState.value.copy(
+                    daftarInduk = repo.getAll().filter { it.status == Perusahaan.STATUS_INDUK },
+                )
             }
         }
     }
 
     fun loadDaftarInduk() {
         viewModelScope.launch {
-            _uiState.update { it.copy(daftarInduk = repo.getAll().filter { p -> p.status == Perusahaan.STATUS_INDUK }) }
+            _uiState.value = _uiState.value.copy(
+                daftarInduk = repo.getAll().filter { it.status == Perusahaan.STATUS_INDUK },
+            )
         }
     }
 
-    fun updateNama(v: String) { _uiState.update { it.copy(nama = v) } }
-    fun updateNpwp(v: String) { _uiState.update { it.copy(npwp = v) } }
-    fun updateAlamat(v: String) { _uiState.update { it.copy(alamat = v) } }
-    fun updateNegara(v: String) { _uiState.update { it.copy(negara = v) } }
-    fun updateStatus(v: String) { _uiState.update { it.copy(status = v) } }
-    fun updateParentId(v: Long?) { _uiState.update { it.copy(parentId = v) } }
-    fun updateTahunPajak(v: Int) { _uiState.update { it.copy(tahunPajak = v) } }
-    fun updateLogoPath(v: String?) { _uiState.update { it.copy(logoPath = v) } }
+    fun updateNama(v: String) { _uiState.value = _uiState.value.copy(nama = v) }
+    fun updateNpwp(v: String) { _uiState.value = _uiState.value.copy(npwp = v) }
+    fun updateAlamat(v: String) { _uiState.value = _uiState.value.copy(alamat = v) }
+    fun updateNegara(v: String) { _uiState.value = _uiState.value.copy(negara = v) }
+    fun updateStatus(v: String) { _uiState.value = _uiState.value.copy(status = v) }
+    fun updateParentId(v: Long?) { _uiState.value = _uiState.value.copy(parentId = v) }
+    fun updateTahunPajak(v: Int) { _uiState.value = _uiState.value.copy(tahunPajak = v) }
+    fun updateLogoPath(v: String?) { _uiState.value = _uiState.value.copy(logoPath = v) }
 
     fun validate(): String? {
         val s = _uiState.value
@@ -83,7 +87,7 @@ class FormPerusahaanViewModel(application: Application) : AndroidViewModel(appli
         val s = _uiState.value
         val err = validate()
         if (err != null) {
-            _uiState.update { it.copy(error = err) }
+            _uiState.value = _uiState.value.copy(error = err)
             return
         }
         viewModelScope.launch {
@@ -100,9 +104,9 @@ class FormPerusahaanViewModel(application: Application) : AndroidViewModel(appli
                     logoPath = s.logoPath,
                 )
                 if (s.isEdit) repo.update(p) else repo.insert(p)
-                _uiState.update { it.copy(saved = true, error = null) }
+                _uiState.value = _uiState.value.copy(saved = true, error = null)
             } catch (e: Exception) {
-                _uiState.update { it.copy(error = e.message ?: "Gagal menyimpan") }
+                _uiState.value = _uiState.value.copy(error = e.message ?: "Gagal menyimpan")
             }
         }
     }
