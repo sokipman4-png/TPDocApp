@@ -66,7 +66,8 @@ class PanduanContentTest {
     fun `link openrouter aanwezig in apikey sectie`() {
         val apikeySection = PanduanContent.sections.find { it.id == "apikey" }
         assertNotNull(apikeySection)
-        assertTrue(apikeySection?.bullets.joinToString("\n").contains("openrouter.ai"))
+        val bullets = apikeySection?.bullets ?: emptyList()
+        assertTrue(bullets.joinToString("\n").contains("openrouter.ai"))
         assertTrue(PanduanContent.URL_OPENROUTER_KEYS.contains("openrouter.ai"))
     }
 }
